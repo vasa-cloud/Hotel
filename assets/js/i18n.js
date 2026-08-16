@@ -22,7 +22,6 @@ window.GABI_I18N = {
     "Kontakt": "Contact",
     "Buchen": "Book",
     "About Us": "About Us",
-    "Entdecken": "Discover",
     "Zur Startseite": "Back to home",
     "Alle Zimmer": "All rooms",
 
@@ -288,7 +287,6 @@ window.GABI_I18N = {
     "Kontakt": "Контакти",
     "Buchen": "Резервация",
     "About Us": "За нас",
-    "Entdecken": "Разгледайте",
     "Zur Startseite": "Към началната страница",
     "Alle Zimmer": "Всички стаи",
 

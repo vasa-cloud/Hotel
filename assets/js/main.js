@@ -456,13 +456,43 @@
   }
 
   /* --- 7 · bookingStub ------------------------------------- */
+  /* Auf der Startseite führt die Leiste weiter zur Buchungsseite und nimmt
+     die Eingaben als Parameter mit — sonst müsste man Zeitraum und Gäste
+     dort ein zweites Mal eintragen. Auf der Buchungsseite selbst bleibt es
+     beim Hinweis, solange die Strecke nicht angebunden ist. */
   function initBookingStub() {
     var form = document.querySelector('.bookbar');
-    var hint = document.querySelector('[data-booking-hint]');
     if (!form) return;
+
+    var hint = document.querySelector('[data-booking-hint]');
+    var target = form.getAttribute('data-booking-target');
+
+    /* Vorbelegen, wenn Werte aus der Startseite mitkommen. */
+    if (!target && window.location.search) {
+      var p = new URLSearchParams(window.location.search);
+      ['checkin', 'checkout', 'guests', 'room'].forEach(function (name) {
+        var v = p.get(name);
+        if (!v) return;
+        var field = form.querySelector('[name="' + name + '"]');
+        if (field) field.value = v;
+      });
+    }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+
+      if (target) {
+        var q = [];
+        ['checkin', 'checkout', 'guests', 'room'].forEach(function (name) {
+          var field = form.querySelector('[name="' + name + '"]');
+          if (field && field.value) {
+            q.push(name + '=' + encodeURIComponent(field.value));
+          }
+        });
+        window.location.href = target + (q.length ? '?' + q.join('&') : '');
+        return;
+      }
+
       if (hint) {
         hint.textContent =
           'Danke — die Verfügbarkeitsprüfung wird im nächsten Schritt angebunden.';

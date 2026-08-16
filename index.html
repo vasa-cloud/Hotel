@@ -14,10 +14,24 @@
      ============================================================ -->
 <header class="header header--overlay" data-header>
   <div class="header__inner">
-    <a class="brand" href="#top" aria-label="Hotel Gabi — Startseite">
-      <img class="brand__logo" src="assets/img/brand/gabi-logo.png"
-           alt="Hotel Gabi" width="640" height="228">
-    </a>
+    <div class="header__left">
+      <a class="brand" href="#top" aria-label="Hotel Gabi — Startseite">
+        <img class="brand__logo" src="assets/img/brand/gabi-logo.png"
+             alt="Hotel Gabi" width="640" height="228">
+      </a>
+
+      <a class="header__gallery" href="galerie.html" aria-label="Galerie ansehen">
+        <span class="header__navring" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4,6a2,2 0 0 1 2,-2h12a2,2 0 0 1 2,2v12a2,2 0 0 1 -2,2H6a2,2 0 0 1 -2,-2Z"/>
+            <path d="M4,16 9,11l4,4"/>
+            <path d="M14,14 16.5,11.5 20,15"/>
+            <path d="M15.2,8a.9,.9 0 1 1 0,1.8a.9,.9 0 1 1 0,-1.8Z" style="fill:currentColor;stroke:none"/>
+          </svg>
+        </span>
+        <span class="header__navlabel">Galerie</span>
+      </a>
+    </div>
 
     <p class="header__tagline">Hotel in the heart of Plovdiv</p>
 
@@ -91,7 +105,13 @@
           </span>
           <span class="scrollcue__label">Entdecken</span>
         </a>
-        <p class="hero__claim">Experience Bulgaria in one hotel</p>
+        <!-- Sprachwahl. Die Übersetzung selbst folgt später; der Schalter
+             merkt sich die Wahl bereits und markiert sie. -->
+        <div class="langswitch" role="group" aria-label="Sprache wählen">
+          <button class="langswitch__opt" type="button" data-lang="bg">BG</button>
+          <span class="langswitch__sep" aria-hidden="true"></span>
+          <button class="langswitch__opt is-active" type="button" data-lang="en" aria-current="true">EN</button>
+        </div>
       </div>
 
       <div class="film__progress" aria-hidden="true">
@@ -103,20 +123,58 @@
 
 
   <!-- ============================================================
-       01 — ABOUT US
+       01 — BUCHUNG  (Gestaltung vorbereitet, Logik folgt später)
        ============================================================ -->
-  <section class="about" id="about" data-reveal-root>
-    <div class="about__inner">
-      <p class="eyebrow" data-reveal><span class="eyebrow__no">01</span> About Us</p>
-      <h2 class="display" data-reveal data-reveal-delay="1">Mitten in<br>Plovdiv.</h2>
-      <p class="about__text" data-reveal data-reveal-delay="2">
-        Hotel Gabi liegt im Park „Erholung und Kultur", nahe der Mall Plovdiv
-        und der Internationalen Messe — dort, wo Alt und Modern in dieser
-        uralten Stadt zusammenkommen.
+  <section class="booking" id="booking" data-reveal-root>
+    <div class="booking__inner">
+
+      <header class="booking__head">
+        <p class="eyebrow eyebrow--light" data-reveal><span class="eyebrow__no">01</span> Buchung</p>
+        <h2 class="display display--light" data-reveal data-reveal-delay="1">
+          Ihr Zimmer wartet schon.<br>Buchen Sie jetzt.
+        </h2>
+      </header>
+
+      <form class="bookbar" data-reveal data-reveal-delay="2" novalidate>
+        <div class="bookbar__field">
+          <label for="b-in">Anreise</label>
+          <input id="b-in" type="date" name="checkin">
+        </div>
+        <div class="bookbar__field">
+          <label for="b-out">Abreise</label>
+          <input id="b-out" type="date" name="checkout">
+        </div>
+        <div class="bookbar__field">
+          <label for="b-guests">Gäste</label>
+          <select id="b-guests" name="guests">
+            <option>1 Gast</option>
+            <option selected>2 Gäste</option>
+            <option>3 Gäste</option>
+            <option>4 Gäste</option>
+          </select>
+        </div>
+        <div class="bookbar__field">
+          <label for="b-room">Kategorie</label>
+          <select id="b-room" name="room">
+            <option>Alle Kategorien</option>
+            <option>Standard-Doppelzimmer</option>
+            <option>Deluxe Doppelzimmer</option>
+            <option>Apartment für 2</option>
+          </select>
+        </div>
+        <button class="bookbar__submit" type="submit">
+          <span>Verfügbarkeit prüfen</span>
+        </button>
+      </form>
+
+      <p class="booking__hint" data-reveal data-reveal-delay="3" data-booking-hint role="status">
+        Die Buchungsstrecke ist noch nicht angebunden — dieser Bereich ist
+        gestalterisch vorbereitet. Rufen Sie uns solange gern direkt an:
+        +359 899 949 857
       </p>
+
     </div>
   </section>
-
 
   <!-- ============================================================
        02 — RÄUME  (vertikales Scrollen → horizontale Bewegung)
@@ -138,35 +196,86 @@
           <path d="M0,70 C 180,10 320,96 500,52 S 830,8 1000,60" />
         </svg>
 
-        <article class="room arch" data-room>
-          <div class="arch__media" style="background-image:url('assets/img/rooms/room-01.jpg'), var(--img-fallback); background-position:75% center"></div>
+        <a class="room arch room--link" href="zimmer-standard.html" data-room>
+          <div class="room__frame">
+            <div class="arch__media" style="background-image:url('assets/img/rooms/room-01.jpg'), var(--img-fallback); background-position:75% center"></div>
+            <div class="room__info">
+              <div class="room__info-top">
+                <span class="room__info-price">ab 180&nbsp;€</span>
+                <span class="room__info-size">2 Gäste</span>
+              </div>
+              <ul class="room__info-list">
+                <li>Flachbildfernseher und Minibar</li>
+                <li>Klimaanlage, kostenloses WLAN</li>
+                <li>Blick auf den Park</li>
+              </ul>
+              <span class="room__info-more">
+                Zimmer ansehen
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
           <div class="room__body">
             <p class="room__index">01</p>
             <h3 class="room__name">Standard-Doppelzimmer</h3>
             <p class="room__desc">Komfortabel und gemütlich, mit Flachbildfernseher, Minibar, Klimaanlage und kostenlosem WLAN.</p>
             <p class="room__price">ab <strong>180&nbsp;€</strong> / Nacht</p>
           </div>
-        </article>
+        </a>
 
-        <article class="room arch room--lift" data-room>
-          <div class="arch__media" style="background-image:url('assets/img/rooms/room-02.jpg'), var(--img-fallback); background-position:40% center"></div>
+        <a class="room arch room--lift room--link" href="zimmer-deluxe.html" data-room>
+          <div class="room__frame">
+            <div class="arch__media" style="background-image:url('assets/img/rooms/room-02.jpg'), var(--img-fallback); background-position:40% center"></div>
+            <div class="room__info">
+              <div class="room__info-top">
+                <span class="room__info-price">ab 240&nbsp;€</span>
+                <span class="room__info-size">2–3 Gäste</span>
+              </div>
+              <ul class="room__info-list">
+                <li>Sofa-Bett als zusätzliches Bett</li>
+                <li>Klimaanlage, Minibar, TV, WLAN</li>
+                <li>Blick auf Mall Plovdiv und Park</li>
+              </ul>
+              <span class="room__info-more">
+                Zimmer ansehen
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
           <div class="room__body">
             <p class="room__index">02</p>
             <h3 class="room__name">Deluxe Doppelzimmer</h3>
             <p class="room__desc">Modernes Zimmer mit Sofa-Bett, Minibar, Klimaanlage, TV und WLAN. Blick auf Plovdiv Mall und den Park.</p>
             <p class="room__price">ab <strong>240&nbsp;€</strong> / Nacht</p>
           </div>
-        </article>
+        </a>
 
-        <article class="room arch" data-room>
-          <div class="arch__media" style="background-image:url('assets/img/rooms/room-03.jpg'), var(--img-fallback); background-position:15% center"></div>
+        <a class="room arch room--link" href="zimmer-apartment.html" data-room>
+          <div class="room__frame">
+            <div class="arch__media" style="background-image:url('assets/img/rooms/room-03.jpg'), var(--img-fallback); background-position:15% center"></div>
+            <div class="room__info">
+              <div class="room__info-top">
+                <span class="room__info-price">ab 380&nbsp;€</span>
+                <span class="room__info-size">2–4 Gäste</span>
+              </div>
+              <ul class="room__info-list">
+                <li>Schlafzimmer und zusätzliches Doppelbett</li>
+                <li>Bad mit Dusche, eigene Terrasse</li>
+                <li>Zwei Fernseher, romantische Beleuchtung</li>
+              </ul>
+              <span class="room__info-more">
+                Zimmer ansehen
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
           <div class="room__body">
             <p class="room__index">03</p>
             <h3 class="room__name">Apartment für 2</h3>
             <p class="room__desc">Schlafzimmer, Doppelbett, eigene Terrasse. TV, Minibar, Klimaanlage und romantische Beleuchtung.</p>
             <p class="room__price">ab <strong>380&nbsp;€</strong> / Nacht</p>
           </div>
-        </article>
+        </a>
 
         <article class="room arch room--lift" data-room>
           <div class="arch__media" style="background-image:url('assets/img/rooms/room-04.jpg'), var(--img-fallback); background-position:55% center"></div>
@@ -389,59 +498,6 @@
   </section>
 
 
-  <!-- ============================================================
-       05 — BUCHUNG  (Gestaltung vorbereitet, Logik folgt später)
-       ============================================================ -->
-  <section class="booking" id="booking" data-reveal-root>
-    <div class="booking__inner">
-
-      <header class="booking__head">
-        <p class="eyebrow eyebrow--light" data-reveal><span class="eyebrow__no">05</span> Buchung</p>
-        <h2 class="display display--light" data-reveal data-reveal-delay="1">
-          Ihr Zimmer wartet schon.<br>Buchen Sie jetzt.
-        </h2>
-      </header>
-
-      <form class="bookbar" data-reveal data-reveal-delay="2" novalidate>
-        <div class="bookbar__field">
-          <label for="b-in">Anreise</label>
-          <input id="b-in" type="date" name="checkin">
-        </div>
-        <div class="bookbar__field">
-          <label for="b-out">Abreise</label>
-          <input id="b-out" type="date" name="checkout">
-        </div>
-        <div class="bookbar__field">
-          <label for="b-guests">Gäste</label>
-          <select id="b-guests" name="guests">
-            <option>1 Gast</option>
-            <option selected>2 Gäste</option>
-            <option>3 Gäste</option>
-            <option>4 Gäste</option>
-          </select>
-        </div>
-        <div class="bookbar__field">
-          <label for="b-room">Kategorie</label>
-          <select id="b-room" name="room">
-            <option>Alle Kategorien</option>
-            <option>Garden Room</option>
-            <option>Terrace Loft</option>
-            <option>Gabi Suite</option>
-            <option>Pool Villa</option>
-            <option>Panorama Penthouse</option>
-          </select>
-        </div>
-        <button class="bookbar__submit" type="submit">
-          <span>Verfügbarkeit prüfen</span>
-        </button>
-      </form>
-
-      <p class="booking__hint" data-reveal data-reveal-delay="3" data-booking-hint role="status">
-        Die Buchungsstrecke folgt im nächsten Schritt — dieser Bereich ist gestalterisch vorbereitet.
-      </p>
-
-    </div>
-  </section>
 
 </main>
 

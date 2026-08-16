@@ -10,6 +10,7 @@
      5. filmScrub      — vertikales Scrollen → Videozeit
      6. roomsRail      — vertikales Scrollen → horizontale Bewegung
      7. bookingStub    — Platzhalter-Verhalten, Logik folgt später
+     8. langSwitch     — Sprachwahl merken (Übersetzung folgt)
    ============================================================ */
 (function () {
   'use strict';
@@ -69,9 +70,11 @@
        sichtbar gilt — dadurch steigen sie nacheinander auf. */
     Array.prototype.forEach.call(stepped, function (n) {
       var step = parseInt(n.getAttribute('data-reveal-step'), 10) || 0;
-      var bottom = -(8 + step * 11);
+      /* Engere Staffelung als zuvor: die Reihenfolge bleibt sichtbar,
+         aber man muss nicht mehr weit scrollen, bis alle da sind. */
+      var bottom = -(4 + step * 6);
       /* Nicht so weit reinziehen, dass es auf kurzen Fenstern nie auslöst. */
-      if (bottom < -55) bottom = -55;
+      if (bottom < -32) bottom = -32;
 
       var obs = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
@@ -148,7 +151,7 @@
 
         /* Distanzabhängige Dauer, gedeckelt – nie hektisch, nie zäh. */
         var dist = Math.abs(y - window.scrollY);
-        scrollTo(y, clamp(520 + dist * 0.28, 620, 1500));
+        scrollTo(y, clamp(320 + dist * 0.16, 380, 850));
       });
     });
   }
@@ -169,8 +172,10 @@
     var progress = section.querySelector('[data-film-progress]');
     if (!video) return;
 
-    /* Scrollweg pro Sekunde Film. Höher = langsamer, ruhiger. */
-    var PX_PER_SECOND = 320;
+    /* Scrollweg pro Sekunde Film. Höher = langsamer, ruhiger.
+       Bei 8 s Film ergibt 120 rund einen Bildschirm Scrollweg — vorher
+       waren es mit 320 fast drei, was sich zäh anfühlte. */
+    var PX_PER_SECOND = 120;
 
     var duration = 0;
     var distance = 0;
@@ -286,7 +291,7 @@
 
       readTarget();
 
-      var k = 1 - Math.pow(1 - 0.16, dt / 16.7);
+      var k = 1 - Math.pow(1 - 0.26, dt / 16.7);
       currentT += (targetT - currentT) * k;
       if (Math.abs(targetT - currentT) < 0.004) currentT = targetT;
 
@@ -374,8 +379,10 @@
 
       if (distance === 0) { reset(); return; }
 
-      /* Sichtbare Höhe + horizontale Strecke = Scrollweg der Sektion */
-      section.style.height = (window.innerHeight + distance) + 'px';
+      /* Scrollweg bewusst kürzer als die horizontale Strecke: bei 1:1
+         musste man sehr lange scrollen. Mit 0.55 legt die Reihe pro
+         Mausrad-Umdrehung fast doppelt so viel Weg zurück. */
+      section.style.height = (window.innerHeight + distance * 0.55) + 'px';
 
       readTarget();
       current = target;
@@ -405,7 +412,7 @@
       readTarget();
 
       /* framerate-unabhängige Glättung */
-      var k = 1 - Math.pow(1 - 0.12, dt / 16.7);
+      var k = 1 - Math.pow(1 - 0.22, dt / 16.7);
       current += (target - current) * k;
 
       if (Math.abs(target - current) < 0.15) current = target;
@@ -463,6 +470,37 @@
     });
   }
 
+  /* --- 8 · langSwitch -------------------------------------- */
+  /* Merkt sich die Sprachwahl und markiert sie. Die Übersetzung selbst
+     ist noch nicht angebunden — deshalb wird hier bewusst kein Text
+     ausgetauscht und nichts vorgetäuscht. */
+  function initLangSwitch() {
+    var opts = document.querySelectorAll('[data-lang]');
+    if (!opts.length) return;
+
+    var stored = null;
+    try { stored = localStorage.getItem('gabi-lang'); } catch (err) {}
+
+    function apply(lang) {
+      Array.prototype.forEach.call(opts, function (o) {
+        var on = o.getAttribute('data-lang') === lang;
+        o.classList.toggle('is-active', on);
+        if (on) o.setAttribute('aria-current', 'true');
+        else o.removeAttribute('aria-current');
+      });
+    }
+
+    if (stored) apply(stored);
+
+    Array.prototype.forEach.call(opts, function (o) {
+      o.addEventListener('click', function () {
+        var lang = o.getAttribute('data-lang');
+        apply(lang);
+        try { localStorage.setItem('gabi-lang', lang); } catch (err) {}
+      });
+    });
+  }
+
   /* --- boot ------------------------------------------------ */
   function boot() {
     var y = document.querySelector('[data-year]');
@@ -474,6 +512,7 @@
     initFilmScrub();
     initRoomsRail();
     initBookingStub();
+    initLangSwitch();
   }
 
   if (document.readyState === 'loading') {

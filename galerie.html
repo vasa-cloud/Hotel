@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kontakt — Hotel Gabi</title>
-<meta name="description" content="Kontakt zum Hotel Gabi in Plovdiv — ul. Peruschtiza 17A. Telefon +359 899 949 857.">
+<title>Galerie — Hotel Gabi</title>
+<meta name="description" content="Galerie des Hotel Gabi Plovdiv — Zimmer, Foyer, Konferenzsaal und Restaurant.">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -12,7 +12,11 @@
 <header class="header" data-header>
   <div class="header__inner">
     <div class="header__left">
-      <a class="header__gallery" href="galerie.html" aria-label="Galerie ansehen">
+      <a class="brand" href="index.html" aria-label="Hotel Gabi — Startseite">
+        <img class="brand__logo" src="assets/img/brand/gabi-logo.png"
+             alt="Hotel Gabi" width="640" height="228">
+      </a>
+      <a class="header__gallery is-current" href="galerie.html" aria-label="Galerie ansehen">
         <span class="header__navring" aria-hidden="true">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4,6a2,2 0 0 1 2,-2h12a2,2 0 0 1 2,2v12a2,2 0 0 1 -2,2H6a2,2 0 0 1 -2,-2Z"/>
@@ -25,10 +29,8 @@
       </a>
     </div>
 
-    <p class="header__tagline">Hotel in the heart of Plovdiv</p>
-
     <nav class="header__nav" aria-label="Kurzwahl">
-      <a class="header__navlink is-current" href="kontakt.html" aria-current="page">
+      <a class="header__navlink" href="kontakt.html">
         <span class="header__navring" aria-hidden="true">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M15,3H6a2,2 0 0 0 -2,2v14a2,2 0 0 0 2,2h9"/>
@@ -72,90 +74,40 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5m0 0 6-6m-6 6 6 6"/></svg>
         Zur Startseite
       </a>
-      <p class="eyebrow" data-reveal data-reveal-delay="1">Kontakt</p>
-      <h1 class="display" data-reveal data-reveal-delay="2">Sprechen<br>Sie uns an.</h1>
+      <p class="eyebrow" data-reveal data-reveal-delay="1">Galerie</p>
+      <h1 class="display" data-reveal data-reveal-delay="2">Das Haus<br>in Bildern.</h1>
       <p class="pagehead__lead" data-reveal data-reveal-delay="3">
-        Für Fragen zu Zimmern, Anlässen oder Veranstaltungen erreichen Sie uns
-        am schnellsten telefonisch.
+        Zimmer, Foyer, Konferenzsaal und Restaurant — ein Rundgang durch
+        Hotel Gabi.
       </p>
     </div>
   </section>
 
-  <!-- Die drei wichtigsten Wege, uns zu erreichen — groß und anklickbar -->
+  <!-- Galerie-Raster. Die Bilder liefert Atila separat; bis dahin steht
+       hier bewusst nichts Erfundenes, nur der leere Platz. -->
   <section class="pagebody" data-reveal-root>
     <div class="pagebody__inner">
-      <div class="cardgrid">
 
-        <div class="rcard" data-reveal-step="0">
-          <span class="rcard__no">01</span>
-          <h2 class="rcard__title">Anrufen</h2>
-          <p class="rcard__text">Der schnellste Weg — wir gehen persönlich ran.</p>
-          <a class="rcard__link" href="tel:+359899949857">+359 899 949 857</a>
-        </div>
-
-        <div class="rcard" data-reveal-step="1">
-          <span class="rcard__no">02</span>
-          <h2 class="rcard__title">Schreiben</h2>
-          <p class="rcard__text">Für Anfragen mit Zeitraum, Gästezahl und Wünschen.</p>
-          <a class="rcard__link" href="mailto:reservations@hotelgabi-bg.com">reservations@hotelgabi-bg.com</a>
-        </div>
-
-        <div class="rcard" data-reveal-step="2">
-          <span class="rcard__no">03</span>
-          <h2 class="rcard__title">Vorbeikommen</h2>
-          <p class="rcard__text">ul. Peruschtiza 17A, Plovdiv — im Park „Erholung und Kultur".</p>
-          <a class="rcard__link" href="https://facebook.com/HotelGabiPlovdiv/" target="_blank" rel="noopener">Auf Facebook ansehen</a>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section class="pagebody" data-reveal-root>
-    <div class="pagebody__inner">
-      <div class="split">
-
-        <div class="prose" data-reveal>
-          <p>
-            Sie erreichen uns für Fragen zu Zimmern, für Feiern und Anlässe
-            sowie für Konferenzen rund um die Internationale Messe Plovdiv.
-          </p>
-
-          <h3>So finden Sie uns</h3>
-          <p>
-            Das Haus liegt im Park „Erholung und Kultur", direkt neben der
-            Mall Plovdiv. Von der Messe, der Altstadt und den Fernstraßen
-            Richtung Sofia, Istanbul und Flughafen sind Sie schnell hier.
-          </p>
-
-          <dl class="factlist">
-            <div>
-              <dt>Adresse</dt>
-              <dd>ul. Peruschtiza 17A<br>Plovdiv, Bulgarien</dd>
-            </div>
-            <div>
-              <dt>Telefon</dt>
-              <dd><a href="tel:+359899949857">+359 899 949 857</a></dd>
-            </div>
-          </dl>
-
-          <p class="note">
-            Rezeptionszeiten stehen hier noch nicht — die trage ich ein,
-            sobald du sie mir gibst.
-          </p>
-        </div>
-
-        <figure class="split__media arch" data-reveal data-reveal-delay="1">
-          <div class="arch__media" style="background-image:url('assets/img/rooms/room-06.jpg'), var(--img-fallback)"></div>
+      <div class="gallery" data-gallery>
+        <!-- BILDER HIER EINSETZEN — Muster für jede Kachel:
+        <figure class="gallery__item" data-reveal-step="0">
+          <div class="arch__media" style="background-image:url('assets/img/gallery/bild-01.jpg'), var(--img-fallback)"></div>
         </figure>
-
+        -->
       </div>
+
+      <p class="note" data-reveal>
+        Die Galerie-Bilder fehlen noch. Sobald du sie mir gibst, lege ich sie
+        unter <code>assets/img/gallery/</code> ab und setze sie hier ein —
+        getrennt von den Zimmerbildern, wie besprochen.
+      </p>
+
     </div>
   </section>
 
   <section class="ctaband">
     <div class="ctaband__inner">
-      <p class="ctaband__title">Lieber gleich reservieren?</p>
+      <p class="ctaband__title">Gefällt Ihnen, was Sie sehen?</p>
       <a class="link-lg" href="buchen.html">
         Zur Buchung
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>

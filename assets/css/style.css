@@ -33,7 +33,7 @@
 
   /* Bewegung — ruhig, kontrolliert, kein Bounce */
   --ease: cubic-bezier(.22, 1, .36, 1);
-  --dur:  .9s;
+  --dur:  .55s;
 
   /* Bogenform der Raumbilder (aus der Vorlage übernommen) */
   --arch-radius: 999px 999px 10px 10px / 46% 46% 4% 4%;
@@ -138,6 +138,27 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
   transition:color .5s var(--ease);
 }
 .header--overlay:not(.is-stuck) .header__tagline{ color:rgba(255,255,255,.9); }
+
+/* Logo und Galerie-Symbol bilden die linke Gruppe des Headers. */
+.header__left{
+  display:flex; align-items:center;
+  gap:clamp(1rem,2.2vw,1.75rem);
+}
+.header__gallery{
+  display:flex; flex-direction:column; align-items:center; gap:.45rem;
+  color:var(--ink);
+  transition:color .5s var(--ease);
+}
+.header--overlay:not(.is-stuck) .header__gallery{ color:var(--white); }
+.header__gallery:hover .header__navring{
+  background:var(--red); border-color:var(--red); color:var(--white);
+  transform:translateY(-3px);
+}
+.header__gallery:hover .header__navlabel{ opacity:1; }
+.header__gallery.is-current .header__navring{
+  background:var(--red); border-color:var(--red); color:var(--white);
+}
+.header__gallery.is-current .header__navlabel{ opacity:1; }
 
 .brand{ display:inline-flex; align-items:center; }
 .brand__logo{
@@ -316,16 +337,30 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 }
 .scrollcue:hover .scrollcue__ring{ background:var(--red); border-color:var(--red); color:var(--white); }
 
-/* Gleiche Form wie die Scroll-Pille: außen rund, einzeilig. */
-.hero__claim{
+/* Sprachwahl — gleiche Pillenform wie der Scroll-Hinweis gegenüber.
+   Ein feiner Strich trennt die beiden Kürzel deutlich voneinander. */
+.langswitch{
+  display:inline-flex; align-items:center;
+  gap:clamp(1rem,2.2vw,1.75rem);
   background:var(--white);
-  color:var(--red);
-  font-family:var(--font-display);
-  font-size:clamp(.95rem, 1.85vw, 1.7rem);
-  line-height:1.2;
-  padding:.5em 1.15em;
   border-radius:999px;
-  white-space:nowrap;
+  padding:.5rem clamp(1.1rem,2vw,1.6rem);
+}
+.langswitch__opt{
+  border:0; background:none; cursor:pointer;
+  font-family:var(--font-display);
+  font-size:clamp(.95rem,1.5vw,1.25rem);
+  letter-spacing:.14em;
+  color:var(--ink-30);
+  padding:0; line-height:1;
+  transition:color .35s var(--ease);
+}
+.langswitch__opt:hover{ color:var(--ink); }
+.langswitch__opt.is-active{ color:var(--red); }
+.langswitch__sep{
+  width:1px; height:1.1em;
+  background:var(--hair);
+  flex:none;
 }
 
 @keyframes nudge{
@@ -527,6 +562,77 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 }
 .ctaband .link-lg:hover{ color:var(--white); border-bottom-color:var(--white); }
 
+/* --- Zimmerkarte mit Hover-Infos -----------------------------
+   Die Karte hebt sich leicht, das Bild zoomt sanft, und ein Feld mit
+   Details fährt von unten über das Foto. Alles über transform/opacity,
+   damit es flüssig bleibt. Auf Touchgeräten (kein echter Hover) sind
+   die Infos dauerhaft sichtbar — siehe Responsive-Abschnitt. */
+/* Erbt Layout von .room (Flex-Spalte); hier nur Farbe und Verhalten. */
+.room--link{ color:inherit; }
+.room--link .arch__media{
+  transition:transform .6s var(--ease);
+}
+.room--link:hover .arch__media,
+.room--link:focus-visible .arch__media{ transform:scale(1.04); }
+
+.room__frame{
+  position:relative;
+  overflow:hidden;
+  border-radius:var(--arch-radius);
+  transition:box-shadow .6s var(--ease), transform .6s var(--ease);
+}
+.room--link:hover .room__frame,
+.room--link:focus-visible .room__frame{
+  transform:translateY(-6px);
+  box-shadow:0 30px 60px -30px rgba(22,17,15,.45);
+}
+
+.room__info{
+  position:absolute; left:0; right:0; bottom:0; z-index:2;
+  padding:clamp(1.1rem,2vw,1.6rem);
+  background:linear-gradient(180deg, rgba(28,10,14,0) 0%, rgba(28,10,14,.88) 42%);
+  color:var(--white);
+  display:flex; flex-direction:column; gap:.5rem;
+  transform:translateY(100%);
+  opacity:0;
+  transition:transform .55s var(--ease), opacity .45s var(--ease);
+}
+.room--link:hover .room__info,
+.room--link:focus-visible .room__info{ transform:translateY(0); opacity:1; }
+
+.room__info-top{
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap:1rem;
+  border-bottom:1px solid rgba(255,255,255,.28);
+  padding-bottom:.5rem;
+}
+.room__info-price{
+  font-family:var(--font-display); font-size:1.15rem;
+}
+.room__info-size{
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(255,255,255,.75);
+}
+.room__info-list{
+  margin:0; padding:0; list-style:none;
+  display:flex; flex-direction:column; gap:.28rem;
+}
+.room__info-list li{
+  font-size:.82rem; line-height:1.4;
+  color:rgba(255,255,255,.88);
+  padding-left:.9rem; position:relative;
+}
+.room__info-list li::before{
+  content:""; position:absolute; left:0; top:.62em;
+  width:5px; height:1px; background:var(--white);
+}
+.room__info-more{
+  margin-top:.35rem;
+  font-size:.7rem; letter-spacing:.18em; text-transform:uppercase;
+  display:inline-flex; align-items:center; gap:.5rem;
+}
+.room__info-more svg{ width:14px; height:14px; }
+
 /* Zimmerkarten im Raster (Buchen-Seite) — nutzt Bogenform und
    Typografie der Startseite, nur ohne horizontale Fahrt. */
 .roomgrid{
@@ -535,6 +641,20 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 }
 .roomgrid__item{ display:flex; flex-direction:column; gap:1.2rem; }
 .roomgrid .arch__media{ height:clamp(260px,36vh,380px); }
+
+/* Galerie-Raster — versetzte Höhen, damit es nicht wie eine Tabelle wirkt.
+   Die Bilder folgen separat; das Raster steht schon bereit. */
+.gallery{
+  display:grid; gap:clamp(1rem,2vw,1.75rem);
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+}
+.gallery__item{ margin:0; }
+.gallery__item .arch__media{
+  height:clamp(240px,32vh,340px);
+  border-radius:24px;
+}
+.gallery__item:nth-child(3n+2) .arch__media{ height:clamp(300px,40vh,430px); }
+.gallery:empty{ display:none; }
 
 /* --- 5 · ABOUT ----------------------------------------------- */
 .about{ background:var(--white); padding:var(--sect-y) var(--gutter); }
@@ -907,7 +1027,7 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
   opacity:0;
   transform:translateY(18px);
   transition:opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
-  transition-delay:calc(var(--d,0) * 110ms);
+  transition-delay:calc(var(--d,0) * 60ms);
 }
 [data-reveal].is-in{ opacity:1; transform:none; }
 
@@ -915,7 +1035,7 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 .hero__title .mask__i{
   transform:translateY(102%);
   transition:transform 1.25s var(--ease);
-  transition-delay:calc(var(--d,0) * 110ms);
+  transition-delay:calc(var(--d,0) * 60ms);
   opacity:1;
 }
 .hero__title .mask__i.is-in{ transform:none; }
@@ -923,7 +1043,7 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 /* Raumkarten treten beim Erreichen sanft ein */
 [data-room]{
   opacity:0; transform:translateY(26px);
-  transition:opacity 1s var(--ease), transform 1s var(--ease);
+  transition:opacity .6s var(--ease), transform .6s var(--ease);
 }
 [data-room].is-in{ opacity:1; transform:none; }
 [data-room].room--lift.is-in{ transform:translateY(clamp(-3.5rem,-5vh,-2rem)); }
@@ -934,7 +1054,7 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 [data-reveal-step]{
   opacity:0;
   transform:translateY(76px) scale(.94);
-  transition:opacity 1.15s var(--ease), transform 1.15s var(--ease);
+  transition:opacity .7s var(--ease), transform .7s var(--ease);
 }
 [data-reveal-step].is-in{ opacity:1; transform:none; }
 
@@ -983,6 +1103,27 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 @media (max-width:900px){
   .reviews__row{ grid-template-columns:1fr; }
 }
+
+/* Ohne echten Hover (Touch) wären die Zimmerinfos nie erreichbar —
+   dort stehen sie deshalb dauerhaft, nur etwas kompakter. */
+@media (hover:none){
+  .room__info{
+    position:static;
+    transform:none; opacity:1;
+    background:none;
+    color:inherit;
+    padding:.9rem 0 0;
+  }
+  .room__info-list li{ color:var(--ink-60); }
+  .room__info-list li::before{ background:var(--red); }
+  .room__info-top{ border-bottom-color:var(--hair); }
+  .room__info-size{ color:var(--ink-30); }
+  .room__info-price{ color:var(--ink); }
+  .room__info-more{ color:var(--red); }
+  .room--link:hover .arch__media{ transform:none; }
+  .room--link:hover .room__frame{ transform:none; box-shadow:none; }
+  .room__frame{ overflow:visible; }
+}
 @media (max-width:700px){
   .whystay__reasons{ grid-template-columns:1fr; }
   .whystay__reason:nth-child(5){ grid-column:auto; }
@@ -1029,7 +1170,7 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 
 @media (max-width:520px){
   /* etwas kleiner, damit die Zeile auch auf schmalen Geräten einzeilig bleibt */
-  .hero__claim{ font-size:.82rem; padding:.5em 1em; }
+  .langswitch{ gap:1rem; padding:.45rem 1rem; }
 }
 
 /* Barrierefreiheit: Bewegung aus */

@@ -1,0 +1,1045 @@
+/* ============================================================
+   HOTEL GABI — Startseite
+   Struktur: 1 Tokens · 2 Base · 3 Header · 4 Hero · 5 About
+             6 Räume (Bogenform + horizontaler Scroll) · 7 Reviews
+             8 Why Stay With Us · 9 Buchung · 10 Footer
+             11 Reveal/Motion · 12 Responsive
+   ============================================================ */
+
+/* --- 1 · TOKENS -------------------------------------------- */
+:root{
+  /* Primärpalette: Rot + Weiß. Bewusst sehr wenige Farben. */
+  --red:        #B01B2E;
+  --red-deep:   #7A0F1E;
+  --red-soft:   #F4E4E6;
+
+  --white:      #FFFFFF;
+  --paper:      #FBF9F8;   /* leicht gebrochenes Weiß */
+  --ink:        #16110F;
+  --ink-60:     rgba(22,17,15,.60);
+  --ink-30:     rgba(22,17,15,.30);
+  --hair:       rgba(22,17,15,.12);
+  --hair-light: rgba(255,255,255,.22);
+
+  /* Typografie — hochwertige Didone/Serif-Kaskade, keine externen Fonts */
+  --font-display: "Bodoni MT", "Didot", "Big Caslon", "Playfair Display",
+                  "Hoefler Text", Georgia, "Times New Roman", serif;
+  --font-sans:    "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+                  system-ui, "Helvetica Neue", Arial, sans-serif;
+
+  /* Rhythmus */
+  --gutter: clamp(1.25rem, 5vw, 5.5rem);
+  --sect-y: clamp(5rem, 12vh, 10rem);
+
+  /* Bewegung — ruhig, kontrolliert, kein Bounce */
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --dur:  .9s;
+
+  /* Bogenform der Raumbilder (aus der Vorlage übernommen) */
+  --arch-radius: 999px 999px 10px 10px / 46% 46% 4% 4%;
+
+  /* Fallback, solange keine echten Fotos hinterlegt sind */
+  --img-fallback:
+    linear-gradient(155deg, #efe7e4 0%, #e2d3d0 42%, #cbb2b0 72%, #a98d8c 100%);
+}
+
+/* --- 2 · BASE ---------------------------------------------- */
+*,*::before,*::after{ box-sizing:border-box; }
+
+html{
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;   /* JS deaktiviert das für die eigene Easing-Logik */
+}
+
+body{
+  margin:0;
+  background:var(--white);
+  color:var(--ink);
+  font-family:var(--font-sans);
+  font-size:clamp(.95rem, .55vw + .8rem, 1.0625rem);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  /* clip statt hidden: hidden würde einen Scroll-Container erzeugen
+     und damit position:sticky der Raum-Sektion aushebeln. */
+  overflow-x:clip;
+}
+
+img,svg,video{ display:block; max-width:100%; }
+h1,h2,h3,p,dl,dd,figure{ margin:0; }
+a{ color:inherit; text-decoration:none; }
+svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; }
+
+::selection{ background:var(--red); color:var(--white); }
+
+:focus-visible{
+  outline:2px solid var(--red);
+  outline-offset:4px;
+  border-radius:2px;
+}
+
+/* Gemeinsame Bausteine */
+.display{
+  font-family:var(--font-display);
+  font-weight:400;
+  font-size:clamp(2.4rem, 6.4vw, 5.4rem);
+  line-height:.98;
+  letter-spacing:-.02em;
+}
+.display--light{ color:var(--white); }
+
+.eyebrow{
+  display:flex; align-items:center; gap:.7rem;
+  font-size:.7rem; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ink-60);
+}
+.eyebrow--light{ color:rgba(255,255,255,.72); }
+.eyebrow__no{ color:var(--red); font-variant-numeric:tabular-nums; }
+.eyebrow--light .eyebrow__no{ color:var(--white); }
+
+/* --- 3 · HEADER -------------------------------------------- */
+.header{
+  position:fixed; inset:0 0 auto 0; z-index:60;
+  padding:clamp(1.1rem,2.4vw,1.9rem) 0;
+  transition:background-color .5s var(--ease), padding .5s var(--ease);
+}
+.header::after{
+  content:""; position:absolute; left:var(--gutter); right:var(--gutter); bottom:0;
+  height:1px; background:var(--hair);
+  transform:scaleX(0); transform-origin:left;
+  transition:transform .8s var(--ease);
+}
+.header.is-stuck{
+  background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(180%) blur(14px);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
+  padding:.85rem 0;
+}
+.header.is-stuck::after{ transform:scaleX(1); }
+
+.header__inner{
+  position:relative;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem;
+  padding-inline:var(--gutter);
+}
+
+/* Absolut zentriert statt als Flex-Element: so sitzt der Spruch exakt in
+   der Mitte des Headers — auch auf den Unterseiten, wo links kein Logo
+   steht und ein Flex-Kind sonst verrutschen würde. */
+.header__tagline{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  white-space:nowrap;
+  font-family:var(--font-display); font-style:italic;
+  font-size:clamp(.95rem,1.35vw,1.25rem);
+  color:var(--ink-60);
+  pointer-events:none;
+  transition:color .5s var(--ease);
+}
+.header--overlay:not(.is-stuck) .header__tagline{ color:rgba(255,255,255,.9); }
+
+.brand{ display:inline-flex; align-items:center; }
+.brand__logo{
+  height:clamp(30px, 3.6vw, 48px);
+  width:auto;
+  transition:height .5s var(--ease), filter .5s var(--ease);
+}
+.header.is-stuck .brand__logo{ height:clamp(26px, 2.9vw, 38px); }
+/* Nur auf der Startseite liegt der Header über dem Video und braucht
+   helle Schrift. Unterseiten haben weißen Grund — dort gilt die
+   normale dunkle Fassung, sonst wäre die Navigation unsichtbar. */
+.header--overlay:not(.is-stuck) .brand__logo{
+  filter:drop-shadow(0 2px 12px rgba(0,0,0,.45));
+}
+.brand--sm .brand__logo{ height:36px; }
+
+/* Kurzwahl auf der Gegenseite des Logos — Kontakt / Buchen / About Us.
+   Der Ring füllt sich beim Hover mit Rot, wie beim Scroll-Hinweis im Hero;
+   dieselbe Geste an zwei Stellen der Seite.
+   margin-inline-start:auto hält die Kurzwahl rechts, auch auf den
+   Unterseiten, wo links kein Logo mehr steht. */
+.header__nav{
+  display:flex; align-items:center; gap:clamp(1.1rem,2.6vw,2.25rem);
+  margin-inline-start:auto;
+}
+
+.header__navlink{
+  display:flex; flex-direction:column; align-items:center; gap:.45rem;
+  color:var(--ink);
+  transition:color .5s var(--ease);
+}
+.header--overlay:not(.is-stuck) .header__navlink{ color:var(--white); }
+
+.header__navring{
+  width:38px; height:38px; flex:none;
+  display:grid; place-items:center;
+  border:1px solid rgba(22,17,15,.16); border-radius:50%;
+  transition:background-color .45s var(--ease), border-color .45s var(--ease),
+             color .45s var(--ease), transform .45s var(--ease);
+}
+.header--overlay:not(.is-stuck) .header__navring{ border-color:rgba(255,255,255,.45); }
+.header__navring svg{ width:16px; height:16px; }
+
+/* Die Seite, auf der man gerade ist, bleibt dauerhaft markiert. */
+.header__navlink.is-current .header__navring{
+  background:var(--red); border-color:var(--red); color:var(--white);
+}
+.header__navlink.is-current .header__navlabel{ opacity:1; }
+
+.header__navlabel{
+  font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
+  opacity:.75;
+  transition:opacity .45s var(--ease);
+}
+
+.header__navlink:hover .header__navring{
+  background:var(--red); border-color:var(--red); color:var(--white);
+  transform:translateY(-3px);
+}
+.header__navlink:hover .header__navlabel{ opacity:1; }
+
+/* --- 4 · HERO ---------------------------------------------- */
+.hero{
+  position:relative;
+  background:var(--white);
+}
+/* Die Bühne trägt das Layout; die Sektion darüber trägt nur den Scrollweg. */
+.hero__stage{
+  position:relative;
+  min-height:100svh;
+  padding:clamp(5.5rem,12vh,8rem) var(--gutter) clamp(2rem,4.5vh,3rem);
+  display:flex; flex-direction:column; justify-content:space-between;
+  gap:clamp(1.25rem,3vh,2.25rem);
+}
+/* Angeheftet nur, wenn JS die Sektionshöhe für das Video gesetzt hat. */
+.hero.is-pinned .hero__stage{
+  position:sticky; top:0;
+  min-height:0;
+  height:100vh;
+  height:100svh;
+}
+
+/* Laufbalken des Films — erscheint nur im angehefteten Zustand */
+.film__progress{
+  position:absolute; left:var(--gutter); right:var(--gutter);
+  bottom:clamp(.7rem,1.8vh,1.2rem);
+  height:1px; background:rgba(255,255,255,.28);
+  opacity:0; transition:opacity .6s var(--ease);
+}
+.hero.is-pinned .film__progress{ opacity:1; }
+.film__progress span{
+  display:block; height:100%; width:0;
+  background:var(--red);
+}
+
+/* Wortmarke oben, darunter das Haus in voller Breite. */
+.hero__grid{
+  flex:1; min-height:0;
+  display:flex; flex-direction:column; justify-content:center;
+  gap:clamp(1.25rem, 3.5vh, 2.75rem);
+}
+
+.hero__title{ margin:0; }
+.hero__title .mask{ display:block; overflow:hidden; padding-bottom:.04em; }
+/* Über dem Film trägt Weiß — Rot bleibt den Akzenten vorbehalten. */
+.hero__title .mask__i{
+  display:block;
+  font-family:var(--font-display);
+  font-weight:400;
+  font-size:clamp(3.4rem, 12vw, 10rem);
+  line-height:.88;
+  letter-spacing:.01em;
+  color:var(--white);
+}
+/* „Hotel" tritt zurück, „Gabi" trägt */
+.hero__title .mask:first-child .mask__i{
+  font-size:clamp(1.2rem, 3.2vw, 2.6rem);
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.85);
+}
+
+/* Vollflächiges Video hinter dem Inhalt. Es füllt die gesamte Bühne;
+   cover beschneidet dabei nur die Ränder, nie die halbe Höhe. */
+.hero__film{
+  position:absolute; inset:0; z-index:0;
+  overflow:hidden;
+  background:var(--img-fallback);   /* greift, falls das Video fehlt */
+}
+.hero__video{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+/* Schleier: hält die weiße Schrift lesbar, ohne das Bild zu ersäufen */
+.hero__film::after{
+  content:""; position:absolute; inset:0;
+  background:
+    linear-gradient(180deg,
+      rgba(28,10,14,.52) 0%,
+      rgba(28,10,14,.16) 32%,
+      rgba(28,10,14,.20) 62%,
+      rgba(28,10,14,.62) 100%);
+}
+
+/* Inhalt liegt über dem Film */
+.hero__grid,
+.hero__foot{ position:relative; z-index:1; }
+.film__progress{ z-index:2; }
+
+.hero__foot{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:1.25rem; flex-wrap:wrap;
+}
+
+/* Beide Elemente sitzen auf weißem Grund — knapp um die Schrift gelegt,
+   damit sie lesbar sind, ohne das Video zuzudecken. */
+.scrollcue{
+  display:inline-flex; align-items:center; gap:.75rem;
+  background:var(--white);
+  border-radius:999px;
+  padding:.4rem 1.2rem .4rem .4rem;
+}
+.scrollcue__ring{
+  width:36px; height:36px; flex:none;
+  display:grid; place-items:center;
+  border:1px solid rgba(22,17,15,.16); border-radius:50%;
+  color:var(--red);
+  transition:background-color .5s var(--ease), border-color .5s var(--ease), color .5s var(--ease);
+}
+.scrollcue__ring svg{ width:16px; height:16px; animation:nudge 2.6s var(--ease) infinite; }
+.scrollcue__label{
+  font-size:.7rem; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ink);
+}
+.scrollcue:hover .scrollcue__ring{ background:var(--red); border-color:var(--red); color:var(--white); }
+
+/* Gleiche Form wie die Scroll-Pille: außen rund, einzeilig. */
+.hero__claim{
+  background:var(--white);
+  color:var(--red);
+  font-family:var(--font-display);
+  font-size:clamp(.95rem, 1.85vw, 1.7rem);
+  line-height:1.2;
+  padding:.5em 1.15em;
+  border-radius:999px;
+  white-space:nowrap;
+}
+
+@keyframes nudge{
+  0%,72%,100%{ transform:translateY(0); opacity:1; }
+  36%        { transform:translateY(3px); opacity:.55; }
+}
+
+/* --- 4b · UNTERSEITEN ---------------------------------------- */
+/* Gemeinsamer Kopf für Kontakt / Buchen / About Us. Kein Video,
+   deshalb trägt hier Typografie und Weißraum allein. */
+.pagehead{
+  padding:clamp(8rem,17vh,11rem) var(--gutter) clamp(2.5rem,6vh,4rem);
+  background:var(--white);
+}
+.pagehead__inner{
+  max-width:1180px; margin-inline:auto;
+  display:flex; flex-direction:column; gap:clamp(1rem,2.5vh,1.75rem);
+}
+.pagehead__lead{
+  max-width:54ch; color:var(--ink-60);
+  font-size:clamp(1rem,1.1vw + .7rem,1.25rem); line-height:1.55;
+}
+.pagehead__back{
+  display:inline-flex; align-items:center; gap:.6rem;
+  font-size:.68rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-60);
+  transition:gap .45s var(--ease), color .45s var(--ease);
+}
+.pagehead__back svg{ width:15px; height:15px; }
+.pagehead__back:hover{ gap:1.1rem; color:var(--red); }
+
+.pagebody{
+  padding:0 var(--gutter) var(--sect-y);
+  background:var(--white);
+}
+.pagebody__inner{ max-width:1180px; margin-inline:auto; }
+
+/* Zweispaltig: links Inhalt, rechts ein Bogenbild als Anker */
+.split{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) clamp(240px,30vw,400px);
+  gap:clamp(2rem,5vw,4.5rem);
+  align-items:start;
+}
+.split__media{ height:clamp(320px,52vh,520px); }
+
+.prose{ display:flex; flex-direction:column; gap:1.5rem; max-width:56ch; }
+/* :not(.eyebrow) verhindert, dass diese Regel den Kicker überschreibt,
+   falls (wie im Business-Block) ein .eyebrow innerhalb von .prose steht. */
+.prose p:not(.eyebrow){ color:var(--ink-60); font-size:1rem; line-height:1.75; }
+/* Der erste Absatz trägt — etwas größer und dunkler, wie ein Vorspann. */
+.prose > p:first-of-type:not(.eyebrow){
+  font-size:clamp(1.05rem, .3vw + 1rem, 1.2rem);
+  color:var(--ink);
+  line-height:1.65;
+}
+/* Kapitel-Überschriften: kursive Display-Schrift mit einem roten Strich
+   davor — dasselbe Motiv wie die Trennlinie neben dem Logo im Header. */
+.prose h3{
+  display:flex; align-items:center; gap:.7rem;
+  font-family:var(--font-display); font-style:italic; font-weight:400;
+  font-size:clamp(1.4rem,2.1vw,1.85rem);
+  color:var(--ink);
+  margin-top:.75rem;
+}
+.prose h3::before{
+  content:""; width:26px; height:1px; background:var(--red); flex:none;
+}
+.prose ul{
+  margin:0; padding:0; list-style:none;
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:.6rem 1.5rem;
+}
+.prose ul li{
+  color:var(--ink-60); font-size:.92rem; line-height:1.5;
+  padding-left:1rem; position:relative;
+}
+.prose ul li::before{
+  content:""; position:absolute; left:0; top:.62em;
+  width:5px; height:1px; background:var(--red);
+}
+
+/* Kontaktzeilen — Label über Wert, wie im Hero-Fuß zuvor */
+.factlist{
+  display:grid; gap:clamp(1.4rem,3vw,2.2rem);
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  margin:0;
+}
+.factlist dt{
+  font-size:.62rem; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ink-30); margin-bottom:.4rem;
+}
+.factlist dd{
+  margin:0;
+  font-family:var(--font-display); font-size:1.15rem;
+  color:var(--ink);
+}
+.factlist a{ border-bottom:1px solid var(--hair); transition:border-color .4s var(--ease), color .4s var(--ease); }
+.factlist a:hover{ color:var(--red); border-color:var(--red); }
+
+.note{
+  margin-top:clamp(1.5rem,4vh,2.5rem);
+  padding:1rem 1.25rem;
+  border-left:2px solid var(--red);
+  background:var(--paper);
+  font-size:.85rem; color:var(--ink-60);
+}
+
+/* --- 4c · GEMEINSAME BAUSTEINE -------------------------------- */
+/* Runde Karte — dieselbe Form wie bei den fünf Gründen, hier als
+   eigene Klasse, damit Unterseiten sie mitbenutzen können. */
+.rcard{
+  background:var(--white);
+  border:1px solid var(--hair);
+  border-radius:26px;
+  padding:clamp(1.5rem,2.4vw,2.1rem);
+  display:flex; flex-direction:column; gap:.55rem;
+  transition:transform .55s var(--ease), box-shadow .55s var(--ease),
+             border-color .55s var(--ease);
+}
+.rcard:hover{
+  transform:translateY(-5px);
+  border-color:var(--red-soft);
+  box-shadow:0 26px 50px -28px rgba(22,17,15,.28);
+}
+.rcard__no{
+  font-family:var(--font-display); color:var(--red);
+  font-size:clamp(1.5rem,2.2vw,2rem); line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.rcard__title{
+  font-family:var(--font-display); font-weight:400;
+  font-size:clamp(1.05rem,1.5vw,1.3rem); color:var(--ink);
+}
+.rcard__text{ font-size:.88rem; line-height:1.6; color:var(--ink-60); }
+.rcard__link{
+  margin-top:.3rem;
+  font-size:.9rem; color:var(--red);
+  border-bottom:1px solid var(--red-soft);
+  align-self:flex-start;
+  transition:border-color .4s var(--ease);
+}
+.rcard__link:hover{ border-color:var(--red); }
+
+.cardgrid{
+  display:grid; gap:clamp(1rem,1.8vw,1.5rem);
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+}
+
+/* Zahlenband — große Ziffern in der Display-Schrift, echte Hausdaten. */
+.statband{
+  display:grid; gap:clamp(1.5rem,3vw,2.5rem);
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  padding:clamp(2rem,5vh,3.25rem) 0;
+  border-block:1px solid var(--hair);
+}
+.statband__no{
+  font-family:var(--font-display); color:var(--red);
+  font-size:clamp(2.4rem,4.5vw,3.6rem); line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.statband__label{
+  margin-top:.6rem;
+  font-size:.66rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink-60);
+}
+
+/* Zwischenüberschrift innerhalb einer Unterseite */
+.sectionhead{
+  max-width:620px;
+  margin-bottom:clamp(1.5rem,4vh,2.5rem);
+  display:flex; flex-direction:column; gap:.9rem;
+}
+.sectionhead .display{ font-size:clamp(1.6rem,2.9vw,2.4rem); }
+
+/* Breites Bildband als ruhiger Abschnittswechsel — überschreibt bewusst
+   die hohe Bogenform, hier soll das Bild ruhig und breit liegen. */
+.bandimage{
+  height:clamp(240px,42vh,440px);
+}
+.bandimage .arch__media{ border-radius:32px; }
+
+/* Abschlussband in Markenrot — schließt jede Unterseite ab */
+.ctaband{
+  background:var(--red); color:var(--white);
+  padding:clamp(3rem,8vh,5.5rem) var(--gutter);
+}
+.ctaband__inner{
+  max-width:1180px; margin-inline:auto;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:clamp(1.5rem,4vw,3rem); flex-wrap:wrap;
+}
+.ctaband__title{
+  font-family:var(--font-display); font-weight:400;
+  font-size:clamp(1.6rem,3.4vw,2.6rem); line-height:1.15;
+}
+.ctaband .link-lg{
+  color:var(--white); border-bottom-color:rgba(255,255,255,.5);
+}
+.ctaband .link-lg:hover{ color:var(--white); border-bottom-color:var(--white); }
+
+/* Zimmerkarten im Raster (Buchen-Seite) — nutzt Bogenform und
+   Typografie der Startseite, nur ohne horizontale Fahrt. */
+.roomgrid{
+  display:grid; gap:clamp(1.5rem,3vw,2.5rem);
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.roomgrid__item{ display:flex; flex-direction:column; gap:1.2rem; }
+.roomgrid .arch__media{ height:clamp(260px,36vh,380px); }
+
+/* --- 5 · ABOUT ----------------------------------------------- */
+.about{ background:var(--white); padding:var(--sect-y) var(--gutter); }
+.about__inner{
+  max-width:640px;
+  display:flex; flex-direction:column; gap:clamp(1rem,2.5vh,1.75rem);
+}
+.about__text{
+  color:var(--ink-60);
+  font-size:1rem; line-height:1.6;
+  max-width:52ch;
+}
+
+/* --- 6 · RÄUME --------------------------------------------- */
+
+/* 5a · Bogenform — die tragende Form der Raumbilder */
+.arch{ position:relative; }
+.arch__media{
+  position:relative;                /* Bezug für den Schleier unten */
+  width:100%; height:100%;
+  border-radius:var(--arch-radius);
+  background-image:var(--img), var(--img-fallback);   /* fehlt die Datei, bleibt der Verlauf */
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat;
+  overflow:hidden;
+  transform:translateZ(0);
+}
+/* feiner Innenrand + Rot-Schleier: hält Fotos in der Markenwelt */
+.arch__media::after{
+  content:""; position:absolute; inset:0; z-index:1;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.34);
+  background:linear-gradient(180deg, rgba(122,15,30,0) 45%, rgba(122,15,30,.55) 100%);
+  pointer-events:none;
+}
+
+.rooms{
+  position:relative;
+  background:var(--paper);
+}
+.rooms__viewport{
+  position:relative;
+  display:flex; align-items:center;
+  overflow:hidden;          /* ohne JS bleibt die Seite trotzdem randfrei */
+}
+/* Angeheftet wird nur, wenn JS die Sektionshöhe gesetzt hat. */
+.rooms.is-pinned .rooms__viewport{
+  position:sticky; top:0;
+  height:100vh;
+  height:100svh;
+}
+
+.rooms__track{
+  position:relative;
+  width:max-content;          /* volle Breite der Bilderreihe, messbar für JS */
+  display:flex; align-items:center;
+  gap:clamp(1.6rem,4vw,4.5rem);
+  padding-inline:var(--gutter);
+}
+
+/* spannt sich über die gesamte Reihe, nicht nur über den Bildschirm */
+.rooms__thread{
+  position:absolute; left:0; top:46%; z-index:0;
+  width:100%; height:120px;
+  color:var(--red); opacity:.16;
+  pointer-events:none;
+}
+.rooms__thread path{ stroke-width:1; stroke-dasharray:2 7; vector-effect:non-scaling-stroke; }
+
+.panel{ flex:none; position:relative; z-index:1; }
+
+.rooms__intro{
+  width:clamp(260px,32vw,430px);
+  display:flex; flex-direction:column; gap:clamp(1rem,2.4vh,1.75rem);
+}
+/* Kicker in der Display-Schrift statt der kleinen Versal-Beschriftung —
+   passt zur „Räume und Angebote"-Zeile, die hier eher wie ein Untertitel
+   als wie ein Label wirken soll. */
+.rooms__intro .eyebrow{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:clamp(1.1rem, 1.9vw, 1.6rem);
+  letter-spacing:0;
+  text-transform:none;
+  color:var(--ink-60);
+}
+.rooms__intro .eyebrow__no{
+  font-family:var(--font-sans);
+  font-style:normal;
+  font-size:.62rem;
+  letter-spacing:.24em;
+}
+/* Kleinerer Schnitt als die übrigen Displays — die Zeile ist deutlich
+   länger und muss innerhalb der gepinnten Sektion Platz finden. */
+.rooms__intro .display{
+  font-size:clamp(1.7rem, 3vw, 2.7rem);
+  line-height:1.08;
+}
+
+/* Breiter als zuvor: der Abschlusssatz ist deutlich länger geworden. */
+.rooms__outro{
+  width:clamp(280px,32vw,430px);
+  display:flex; flex-direction:column; gap:1rem;
+}
+.rooms__outro .link-lg{
+  font-size:clamp(1.15rem,2vw,1.6rem);
+  line-height:1.25;
+  align-items:flex-end;
+}
+.rooms__outro-k{
+  font-family:var(--font-display); font-style:italic;
+  font-size:clamp(1.6rem,3vw,2.6rem); color:var(--ink-30);
+}
+.link-lg{
+  display:inline-flex; align-items:center; gap:.8rem;
+  font-family:var(--font-display);
+  font-size:clamp(1.3rem,2.4vw,2rem);
+  color:var(--red);
+  padding-bottom:.35rem;
+  border-bottom:1px solid var(--red);
+  transition:gap .5s var(--ease), color .5s var(--ease);
+}
+.link-lg svg{ width:22px; height:22px; }
+.link-lg:hover{ gap:1.4rem; color:var(--red-deep); }
+
+/* 5b · Raumkarte */
+.room{
+  flex:none;
+  width:clamp(230px, 25vw, 360px);
+  display:flex; flex-direction:column; gap:1.35rem;
+}
+.room .arch__media{ height:clamp(320px, 52vh, 540px); }
+.room--lift{ transform:translateY(clamp(-3.5rem, -5vh, -2rem)); }
+
+.room__body{ display:flex; flex-direction:column; gap:.45rem; }
+.room__index{
+  font-size:.66rem; letter-spacing:.26em; color:var(--red);
+  font-variant-numeric:tabular-nums;
+}
+.room__name{
+  font-family:var(--font-display); font-weight:400;
+  font-size:clamp(1.35rem,2vw,1.85rem); line-height:1.1;
+}
+.room__desc{ font-size:.86rem; line-height:1.55; color:var(--ink-60); max-width:32ch; }
+.room__price{ font-size:.8rem; color:var(--ink-60); margin-top:.15rem; }
+.room__price strong{ color:var(--ink); font-weight:500; }
+
+/* 5c · Fortschritt der Raum-Sequenz */
+.rooms__progress{
+  position:absolute; left:var(--gutter); right:var(--gutter); bottom:clamp(1.4rem,4vh,2.6rem);
+  height:1px; background:var(--hair);
+}
+.rooms__progress span{
+  display:block; height:100%; width:0;
+  background:var(--red); transform-origin:left;
+}
+
+/* --- 7 · REVIEWS ---------------------------------------------- */
+.reviews{ background:var(--white); padding:var(--sect-y) var(--gutter); }
+.reviews__inner{ max-width:1180px; margin-inline:auto; }
+.reviews__head{ margin-bottom:clamp(2.5rem,6vh,4rem); display:flex; flex-direction:column; gap:1rem; }
+
+/* Ein großes, zentrales Zitat trägt die Section — kein Drei-Spalten-Raster.
+   Das Anführungszeichen nutzt denselben blassen Rotton wie --red-soft. */
+.reviews__feature{
+  max-width:760px; margin:0 auto clamp(3rem,7vh,5rem);
+  text-align:center;
+}
+.reviews__mark{
+  display:block;
+  font-family:var(--font-display);
+  font-size:clamp(4.5rem,11vw,7.5rem);
+  line-height:1;
+  color:var(--red-soft);
+  margin-bottom:clamp(-2.2rem,-4vw,-1.4rem);
+}
+.reviews__quote{
+  margin:0;
+  font-family:var(--font-display); font-style:italic; font-weight:400;
+  font-size:clamp(1.4rem,2.6vw,2.1rem);
+  line-height:1.42;
+  color:var(--ink);
+}
+.reviews__by{
+  margin-top:1.6rem;
+  display:flex; flex-direction:column; align-items:center; gap:.55rem;
+}
+.reviews__stars{ display:flex; gap:.2rem; color:var(--red); }
+.reviews__stars svg{ width:13px; height:13px; }
+.reviews__name{ font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-60); }
+
+/* Kartenreihe nach der Vorlage: runde Marke oben, Name, Datum, Sterne, Text.
+   Alles zentriert, Karten außen rund. */
+.reviews__row{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(1.5rem,3vw,2.25rem);
+  align-items:start;
+}
+.reviews__card{
+  background:var(--white);
+  border:1px solid var(--hair);
+  border-radius:22px;
+  padding:clamp(1.75rem,3vw,2.25rem) clamp(1.25rem,2.4vw,1.9rem);
+  display:flex; flex-direction:column; align-items:center; gap:.7rem;
+  text-align:center;
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease),
+             border-color .5s var(--ease);
+}
+.reviews__card:hover{
+  transform:translateY(-5px);
+  border-color:var(--red-soft);
+  box-shadow:0 26px 50px -28px rgba(22,17,15,.28);
+}
+/* Profilbild-Platz: bis echte Gästefotos vorliegen steht hier eine
+   neutrale Silhouette — siehe Hinweis im HTML. */
+.reviews__avatar{
+  width:58px; height:58px; flex:none;
+  display:grid; place-items:center;
+  border-radius:50%;
+  background:var(--red-soft);
+  color:var(--red);
+  overflow:hidden;
+}
+.reviews__avatar svg{ width:32px; height:32px; }
+/* Flächige Symbole: die globale Regel svg path{fill:none} zeichnet sonst
+   nur Umrisse — deshalb hier gezielt überschreiben. */
+.reviews__avatar svg path,
+.reviews__stars svg path,
+.reviews__card-stars svg path{ fill:currentColor; stroke:none; }
+/* Falls später ein echtes Foto eingesetzt wird, füllt es den Kreis aus. */
+.reviews__avatar img{ width:100%; height:100%; object-fit:cover; }
+.reviews__card-name{
+  font-family:var(--font-display);
+  font-size:1.05rem; color:var(--ink);
+}
+.reviews__card-date{
+  font-size:.68rem; letter-spacing:.14em; color:var(--ink-30);
+  font-variant-numeric:tabular-nums;
+}
+.reviews__card-stars{ display:flex; gap:.15rem; color:var(--red); }
+.reviews__card-stars svg{ width:13px; height:13px; }
+.reviews__card-quote{
+  margin:.2rem 0 0; color:var(--ink-60);
+  font-size:.92rem; line-height:1.62;
+}
+.reviews__card-name{ font-size:.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-30); }
+
+/* --- 8 · WHY STAY WITH US -------------------------------------- */
+.whystay{ background:var(--paper); padding:var(--sect-y) var(--gutter); }
+.whystay__inner{ max-width:1180px; margin-inline:auto; }
+.whystay__head{ max-width:620px; margin-bottom:clamp(2.5rem,6vh,4rem); display:flex; flex-direction:column; gap:1rem; }
+
+/* Fünf runde Karten statt eines Rasters mit Trennlinien.
+   Sechserraster als Grundlage: drei Karten oben (je 2 Spalten), zwei
+   darunter mittig (Start bei Spalte 2 und 4). */
+.whystay__reasons{
+  display:grid; grid-template-columns:repeat(6,1fr);
+  gap:clamp(1.1rem,2vw,1.75rem);
+}
+/* Form und Hover kommen aus .rcard — hier nur Rasterlage und Größe. */
+.whystay__reason{
+  grid-column:span 2;
+  padding:clamp(1.75rem,2.6vw,2.4rem);
+  gap:.6rem;
+}
+.whystay__reason:nth-child(4){ grid-column:2 / span 2; }
+.whystay__reason:nth-child(5){ grid-column:4 / span 2; }
+.whystay__reason .rcard__no{ font-size:clamp(1.7rem,2.5vw,2.2rem); }
+.whystay__reason .rcard__title{ font-size:clamp(1.15rem,1.6vw,1.4rem); }
+
+/* Business-Meeting-Block — nutzt .split/.prose der Unterseiten wieder,
+   nur mit vertauschter Spaltenreihenfolge (Bild links, Text rechts). */
+.whystay__business{
+  margin-top:clamp(3.5rem,8vh,6rem);
+  padding-top:clamp(3rem,7vh,5rem);
+  border-top:1px solid var(--hair);
+}
+.split--media-left{ grid-template-columns:clamp(240px,32vw,420px) minmax(0,1fr); }
+.whystay__business-title{ font-size:clamp(1.6rem,2.6vw,2.2rem); }
+.whystay__business .prose h4{
+  font-family:var(--font-sans); font-weight:600;
+  font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink); margin-top:.5rem;
+}
+
+/* --- 9 · BUCHUNG ------------------------------------------- */
+.booking{
+  background:var(--red);
+  color:var(--white);
+  padding:var(--sect-y) var(--gutter);
+}
+.booking__inner{ max-width:1180px; margin-inline:auto; }
+.booking__head{ display:flex; flex-direction:column; gap:clamp(1rem,2.5vh,1.8rem); }
+
+.bookbar{
+  margin-top:clamp(2.5rem,7vh,4.5rem);
+  background:var(--white);
+  /* Vollständig gerundete Enden wie bei der Scroll-Pille im Hero.
+     overflow:hidden, damit der rote Knopf rechts sauber mitgerundet wird. */
+  border-radius:999px;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr)) auto;
+  align-items:stretch;
+}
+/* Etwas mehr Luft links, sonst klebt die erste Beschriftung an der Rundung. */
+.bookbar__field:first-child{ padding-inline-start:clamp(1.5rem,2.6vw,2.4rem); }
+.bookbar__field{
+  display:flex; flex-direction:column; gap:.35rem;
+  padding:clamp(1rem,2vw,1.5rem) clamp(1rem,1.8vw,1.6rem);
+  border-right:1px solid var(--hair);
+  min-width:0;
+}
+.bookbar__field label{
+  font-size:.6rem; letter-spacing:.24em; text-transform:uppercase; color:var(--ink-30);
+}
+.bookbar__field input,
+.bookbar__field select{
+  appearance:none; -webkit-appearance:none;
+  border:0; background:transparent; padding:0;
+  font:inherit; font-size:.95rem; color:var(--ink);
+  width:100%; min-width:0;
+  cursor:pointer;
+}
+.bookbar__field select{
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-30) 50%),
+                   linear-gradient(135deg,var(--ink-30) 50%,transparent 50%);
+  background-position:right 2px center, right -3px center;
+  background-size:5px 5px, 5px 5px;
+  background-repeat:no-repeat;
+  padding-right:1.2rem;
+}
+
+.bookbar__submit{
+  border:0; cursor:pointer;
+  background:var(--red-deep); color:var(--white);
+  font:inherit; font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+  padding:0 clamp(1.6rem,3vw,2.8rem);
+  transition:background-color .45s var(--ease);
+}
+.bookbar__submit:hover{ background:var(--ink); }
+
+.booking__hint{
+  margin-top:1.6rem;
+  font-size:.78rem; letter-spacing:.05em;
+  color:rgba(255,255,255,.66);
+}
+
+/* --- 10 · FOOTER -------------------------------------------- */
+.footer{
+  background:var(--white);
+  padding:clamp(3rem,8vh,5rem) var(--gutter);
+  border-top:1px solid var(--hair);
+}
+.footer__inner{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1.5rem; flex-wrap:wrap;
+}
+.footer__addr, .footer__copy{ font-size:.78rem; color:var(--ink-60); }
+
+/* --- 11 · REVEAL / MOTION ----------------------------------- */
+[data-reveal]{
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  transition-delay:calc(var(--d,0) * 110ms);
+}
+[data-reveal].is-in{ opacity:1; transform:none; }
+
+/* Der Hero-Schriftzug steigt aus seiner Maske */
+.hero__title .mask__i{
+  transform:translateY(102%);
+  transition:transform 1.25s var(--ease);
+  transition-delay:calc(var(--d,0) * 110ms);
+  opacity:1;
+}
+.hero__title .mask__i.is-in{ transform:none; }
+
+/* Raumkarten treten beim Erreichen sanft ein */
+[data-room]{
+  opacity:0; transform:translateY(26px);
+  transition:opacity 1s var(--ease), transform 1s var(--ease);
+}
+[data-room].is-in{ opacity:1; transform:none; }
+[data-room].room--lift.is-in{ transform:translateY(clamp(-3.5rem,-5vh,-2rem)); }
+
+/* Scroll-gestaffelte Elemente — bewusst kräftiger als der Rest der Seite:
+   deutlicher Weg von unten plus leichte Vergrößerung, damit die Bewegung
+   klar zu sehen ist und nicht bloß erahnt wird. */
+[data-reveal-step]{
+  opacity:0;
+  transform:translateY(76px) scale(.94);
+  transition:opacity 1.15s var(--ease), transform 1.15s var(--ease);
+}
+[data-reveal-step].is-in{ opacity:1; transform:none; }
+
+/* --- 12 · RESPONSIVE ---------------------------------------- */
+
+/* Tablet */
+@media (max-width:1000px){
+  .room{ width:clamp(220px,42vw,320px); }
+}
+
+/* Icons bleiben immer sichtbar — nur die Beschriftung weicht bei wenig Platz.
+   Kein Hamburger, keine versteckte Navigation, nur weniger Text daneben. */
+/* Ab hier reicht der Platz zwischen Logo und Symbolen nicht mehr aus. */
+@media (max-width:1100px){
+  .header__tagline{ display:none; }
+}
+
+@media (max-width:560px){
+  .header__navlabel{ display:none; }
+  .header__nav{ gap:.85rem; }
+  .header__navring{ width:34px; height:34px; }
+}
+
+/* Unterseiten einspaltig, Bild wandert unter den Text */
+@media (max-width:859px){
+  .split{ grid-template-columns:1fr; }
+  .split--media-left{ grid-template-columns:1fr; }
+  .split__media{ height:clamp(260px,38vh,380px); width:min(100%,420px); }
+
+  /* Zimmerkarten untereinander, Abschlussband gestapelt */
+  .roomgrid{ grid-template-columns:1fr; }
+  .roomgrid .arch__media{ height:clamp(260px,40vh,360px); }
+  .ctaband__inner{ flex-direction:column; align-items:flex-start; }
+}
+
+/* Zwischenstufe: Gründe zweispaltig, letzte Karte über die volle Breite */
+@media (max-width:1000px){
+  .whystay__reasons{ grid-template-columns:repeat(2,1fr); }
+  .whystay__reason,
+  .whystay__reason:nth-child(4),
+  .whystay__reason:nth-child(5){ grid-column:auto; }
+  .whystay__reason:nth-child(5){ grid-column:1 / -1; }
+}
+
+/* Reviews und Gründe einspaltig */
+@media (max-width:900px){
+  .reviews__row{ grid-template-columns:1fr; }
+}
+@media (max-width:700px){
+  .whystay__reasons{ grid-template-columns:1fr; }
+  .whystay__reason:nth-child(5){ grid-column:auto; }
+}
+
+/* Mobil — die Sequenz bleibt horizontal, nur nativ gescrollt.
+   Damit kann die Animation auf kleinen Screens nicht "kaputtgehen". */
+@media (max-width:859px){
+  /* Kein Anheften: das Video läuft hier von selbst in Schleife.
+     Ohne Höhenzwang darf es die volle Breite nehmen. */
+  .hero{ height:auto !important; }
+  .hero__stage{ position:static; height:auto; min-height:100svh; }
+  .film__progress{ display:none; }
+
+  .rooms{ height:auto !important; padding-block:var(--sect-y); }
+  .rooms__viewport{
+    position:static; height:auto;
+    overflow-x:auto; overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .rooms__viewport::-webkit-scrollbar{ display:none; }
+  .rooms__track{ transform:none !important; gap:1.5rem; padding-block:1rem; }
+  .rooms__track > *{ scroll-snap-align:center; }
+  .rooms__intro{ width:min(80vw,340px); scroll-snap-align:start; }
+  .rooms__outro{ width:min(70vw,300px); }
+  .room{ width:min(70vw,300px); }
+  .room--lift{ transform:none; }
+  [data-room].room--lift.is-in{ transform:none; }
+  .rooms__thread{ display:none; }
+  .rooms__progress{ display:none; }
+
+  /* Mehrzeilig gestapelt — eine volle Pillenform sähe hier schief aus. */
+  .bookbar{ grid-template-columns:repeat(2,minmax(0,1fr)); border-radius:28px; }
+  .bookbar__field:first-child{ padding-inline-start:clamp(1rem,1.8vw,1.6rem); }
+  .bookbar__field:nth-child(2n){ border-right:0; }
+  .bookbar__field:nth-child(-n+2){ border-bottom:1px solid var(--hair); }
+  .bookbar__submit{ grid-column:1 / -1; padding-block:1.15rem; }
+
+  .hero__foot{ flex-direction:column; align-items:flex-start; gap:1.5rem; }
+  .footer__inner{ flex-direction:column; align-items:flex-start; }
+}
+
+@media (max-width:520px){
+  /* etwas kleiner, damit die Zeile auch auf schmalen Geräten einzeilig bleibt */
+  .hero__claim{ font-size:.82rem; padding:.5em 1em; }
+}
+
+/* Barrierefreiheit: Bewegung aus */
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  [data-reveal],[data-room]{ opacity:1 !important; transform:none !important; }
+  .hero__title .mask__i{ transform:none !important; }
+  .hero{ height:auto !important; }
+  .hero__stage{ position:static; height:auto; min-height:100svh; }
+  .film__progress{ display:none; }
+  .rooms{ height:auto !important; }
+  .rooms__viewport{ position:static; height:auto; overflow-x:auto; }
+  .rooms__track{ transform:none !important; }
+}

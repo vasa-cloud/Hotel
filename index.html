@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hotel Gabi</title>
+<meta name="description" content="Hotel Gabi — Ruhe, Architektur und Gastfreundschaft in ihrer reinsten Form.">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER — bewusst minimal: nur Marke, kein Menü, kein Sign-In
+     ============================================================ -->
+<header class="header header--overlay" data-header>
+  <div class="header__inner">
+    <a class="brand" href="#top" aria-label="Hotel Gabi — Startseite">
+      <img class="brand__logo" src="assets/img/brand/gabi-logo.png"
+           alt="Hotel Gabi" width="640" height="228">
+    </a>
+
+    <p class="header__tagline">Hotel in the heart of Plovdiv</p>
+
+
+    <nav class="header__nav" aria-label="Kurzwahl">
+      <a class="header__navlink" href="kontakt.html">
+        <span class="header__navring" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15,3H6a2,2 0 0 0 -2,2v14a2,2 0 0 0 2,2h9"/>
+            <path d="M10,12H21"/>
+            <path d="M17,8 21,12 17,16"/>
+          </svg>
+        </span>
+        <span class="header__navlabel">Kontakt</span>
+      </a>
+      <a class="header__navlink" href="buchen.html">
+        <span class="header__navring" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6,8a2,2 0 0 1 2,-2h8a2,2 0 0 1 2,2v11a2,2 0 0 1 -2,2H8a2,2 0 0 1 -2,-2Z"/>
+            <path d="M8,3.5v4"/>
+            <path d="M16,3.5v4"/>
+            <path d="M6,10H18"/>
+            <path d="M8.5,14.5 10.8,16.8 15.3,12.3"/>
+          </svg>
+        </span>
+        <span class="header__navlabel">Buchen</span>
+      </a>
+      <a class="header__navlink" href="about.html">
+        <span class="header__navring" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12,21a9,9 0 1 1 0,-18a9,9 0 1 1 0,18Z"/>
+            <path d="M12,11v5"/>
+            <path d="M12,7.4a.6,.6 0 1 1 0,1.2a.6,.6 0 1 1 0,-1.2Z" style="fill:currentColor;stroke:none"/>
+          </svg>
+        </span>
+        <span class="header__navlabel">About&nbsp;Us</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================
+       01 — HERO
+       ============================================================ -->
+  <section class="hero" data-reveal-root data-film>
+    <!-- bleibt stehen, während das Video am Scrollen hängt -->
+    <div class="hero__stage" data-film-stage>
+
+      <!-- Vollflächiges Motiv. Läuft nicht von selbst, sondern am Scrollrad. -->
+      <div class="hero__film">
+        <video class="hero__video" data-film-video
+               src="assets/video/hotel.mp4"
+               poster="assets/img/hero/hotel.jpg"
+               muted playsinline preload="auto"
+               disablepictureinpicture
+               aria-label="Hotel Gabi — Ansicht des Hauses"></video>
+      </div>
+
+      <div class="hero__grid">
+        <h1 class="hero__title">
+          <span class="mask"><span class="mask__i" data-reveal data-reveal-delay="0">Hotel</span></span>
+          <span class="mask"><span class="mask__i" data-reveal data-reveal-delay="1">Gabi</span></span>
+        </h1>
+      </div>
+
+      <div class="hero__foot">
+        <a class="scrollcue" href="#rooms" data-scroll>
+          <span class="scrollcue__ring" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m0 0 6-6m-6 6-6-6"/></svg>
+          </span>
+          <span class="scrollcue__label">Entdecken</span>
+        </a>
+        <p class="hero__claim">Experience Bulgaria in one hotel</p>
+      </div>
+
+      <div class="film__progress" aria-hidden="true">
+        <span data-film-progress></span>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       01 — ABOUT US
+       ============================================================ -->
+  <section class="about" id="about" data-reveal-root>
+    <div class="about__inner">
+      <p class="eyebrow" data-reveal><span class="eyebrow__no">01</span> About Us</p>
+      <h2 class="display" data-reveal data-reveal-delay="1">Mitten in<br>Plovdiv.</h2>
+      <p class="about__text" data-reveal data-reveal-delay="2">
+        Hotel Gabi liegt im Park „Erholung und Kultur", nahe der Mall Plovdiv
+        und der Internationalen Messe — dort, wo Alt und Modern in dieser
+        uralten Stadt zusammenkommen.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       02 — RÄUME  (vertikales Scrollen → horizontale Bewegung)
+       Die Bilder liegen in Bogen-Form (arch), analog zur Vorlage.
+       ============================================================ -->
+  <section class="rooms" id="rooms" data-rooms>
+    <div class="rooms__viewport" data-rooms-viewport>
+
+      <div class="rooms__track" data-rooms-track>
+
+        <!-- Intro-Panel: fährt mit nach links -->
+        <div class="rooms__intro panel">
+          <p class="eyebrow"><span class="eyebrow__no">02</span> Räume und Angebote</p>
+          <h2 class="display">3 Hotelzimmer<br>mit 3 verschiedenen<br>Angeboten es zu&nbsp;erleben.</h2>
+        </div>
+
+        <!-- dezente Verbindungslinie hinter den Bögen -->
+        <svg class="rooms__thread" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 1000 100">
+          <path d="M0,70 C 180,10 320,96 500,52 S 830,8 1000,60" />
+        </svg>
+
+        <article class="room arch" data-room>
+          <div class="arch__media" style="--img:url('assets/img/rooms/room-01.jpg'); background-position:75% center"></div>
+          <div class="room__body">
+            <p class="room__index">01</p>
+            <h3 class="room__name">Standard-Doppelzimmer</h3>
+            <p class="room__desc">Komfortabel und gemütlich, mit Flachbildfernseher, Minibar, Klimaanlage und kostenlosem WLAN.</p>
+            <p class="room__price">ab <strong>180&nbsp;€</strong> / Nacht</p>
+          </div>
+        </article>
+
+        <article class="room arch room--lift" data-room>
+          <div class="arch__media" style="--img:url('assets/img/rooms/room-02.jpg'); background-position:40% center"></div>
+          <div class="room__body">
+            <p class="room__index">02</p>
+            <h3 class="room__name">Deluxe Doppelzimmer</h3>
+            <p class="room__desc">Modernes Zimmer mit Sofa-Bett, Minibar, Klimaanlage, TV und WLAN. Blick auf Plovdiv Mall und den Park.</p>
+            <p class="room__price">ab <strong>240&nbsp;€</strong> / Nacht</p>
+          </div>
+        </article>
+
+        <article class="room arch" data-room>
+          <div class="arch__media" style="--img:url('assets/img/rooms/room-03.jpg'); background-position:15% center"></div>
+          <div class="room__body">
+            <p class="room__index">03</p>
+            <h3 class="room__name">Apartment für 2</h3>
+            <p class="room__desc">Schlafzimmer, Doppelbett, eigene Terrasse. TV, Minibar, Klimaanlage und romantische Beleuchtung.</p>
+            <p class="room__price">ab <strong>380&nbsp;€</strong> / Nacht</p>
+          </div>
+        </article>
+
+        <article class="room arch room--lift" data-room>
+          <div class="arch__media" style="--img:url('assets/img/rooms/room-04.jpg'); background-position:55% center"></div>
+          <div class="room__body">
+            <p class="room__index">04</p>
+            <h3 class="room__name">For your special occasion</h3>
+            <p class="room__desc">We take care of your guests for weddings, christenings, proms and more. Let us handle the details, so you can enjoy the moment.</p>
+          </div>
+        </article>
+
+        <article class="room arch" data-room>
+          <div class="arch__media" style="--img:url('assets/img/rooms/room-05.jpg'); background-position:60% center"></div>
+          <div class="room__body">
+            <p class="room__index">05</p>
+            <h3 class="room__name">A romantic escape for two</h3>
+            <p class="room__desc">Book a romantic getaway, with or without an occasion. Enjoy a beautifully decorated room, fine wine and something sweet.</p>
+          </div>
+        </article>
+
+        <article class="room arch room--lift" data-room>
+          <div class="arch__media" style="--img:url('assets/img/rooms/room-06.jpg')"></div>
+          <div class="room__body">
+            <p class="room__index">06</p>
+            <h3 class="room__name">Congress events and exhibitions</h3>
+            <p class="room__desc">Hotel Gabi welcomes corporate guests during exhibitions at the Plovdiv Fair. Our conference hall is ready for congresses and events of any size.</p>
+          </div>
+        </article>
+
+        <!-- Abschluss-Panel: Übergang zur Buchung -->
+        <div class="rooms__outro panel">
+          <p class="rooms__outro-k">Buchen Sie jetzt</p>
+          <a class="link-lg" href="#booking" data-scroll>
+            Ihr Traumzimmer in Plovdiv, Bulgarien
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>
+          </a>
+        </div>
+
+      </div><!-- /track -->
+
+      <div class="rooms__progress" aria-hidden="true">
+        <span data-rooms-progress></span>
+      </div>
+    </div><!-- /viewport -->
+  </section>
+
+
+  <!-- ============================================================
+       03 — REVIEWS
+       Ein großes Zitat trägt die Section, drei kleinere folgen versetzt
+       darunter — bewusst kein gleichförmiges Drei-Spalten-Raster.
+       Reveal-Verhalten läuft über [data-reveal], siehe main.js.
+       ============================================================ -->
+  <section class="reviews" id="reviews" data-reveal-root>
+    <div class="reviews__inner">
+
+      <div class="reviews__head">
+        <p class="eyebrow"><span class="eyebrow__no">03</span> Guest Reviews</p>
+        <h2 class="display">Gäste aus der<br>ganzen Welt.</h2>
+      </div>
+
+      <figure class="reviews__feature" data-reveal>
+        <span class="reviews__mark" aria-hidden="true">„</span>
+        <blockquote class="reviews__quote">
+          Ruhig gelegen und trotzdem mitten im Geschehen — der Park vor der
+          Tür, die Mall in Laufweite. Das Zimmer war makellos, das Personal
+          aufmerksam, ohne aufdringlich zu sein.
+        </blockquote>
+        <figcaption class="reviews__by">
+          <span class="reviews__stars" aria-label="5 von 5 Sternen">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+          </span>
+          <span class="reviews__name">Gast aus Deutschland</span>
+        </figcaption>
+      </figure>
+
+      <div class="reviews__row">
+
+        <!-- Platzhalter-Profilbild: neutrale Silhouette, bis echte
+             Gästefotos mit Einverständnis vorliegen. Dann hier ein
+             <img> einsetzen, das CSS ist darauf vorbereitet. -->
+        <article class="reviews__card" data-reveal-step="0">
+          <span class="reviews__avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2Zm0 1.9c-4.5 0-8.2 2.5-8.2 5.6V21h16.4v-1.3c0-3.1-3.7-5.6-8.2-5.6Z"/></svg>
+          </span>
+          <span class="reviews__card-name">Gast aus Griechenland</span>
+          <span class="reviews__card-date">14. März 2026</span>
+          <span class="reviews__card-stars" aria-label="5 von 5 Sternen">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+          </span>
+          <p class="reviews__card-quote">
+            Perfekte Lage für die Messe Plovdiv. Kurze Wege, ruhige Nächte.
+          </p>
+        </article>
+
+        <article class="reviews__card" data-reveal-step="1">
+          <span class="reviews__avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2Zm0 1.9c-4.5 0-8.2 2.5-8.2 5.6V21h16.4v-1.3c0-3.1-3.7-5.6-8.2-5.6Z"/></svg>
+          </span>
+          <span class="reviews__card-name">Gast aus Großbritannien</span>
+          <span class="reviews__card-date">27. November 2025</span>
+          <span class="reviews__card-stars" aria-label="4 von 5 Sternen">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+          </span>
+          <p class="reviews__card-quote">
+            Das Deluxe-Zimmer mit Blick auf den Park war genau richtig für uns.
+          </p>
+        </article>
+
+        <article class="reviews__card" data-reveal-step="2">
+          <span class="reviews__avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2Zm0 1.9c-4.5 0-8.2 2.5-8.2 5.6V21h16.4v-1.3c0-3.1-3.7-5.6-8.2-5.6Z"/></svg>
+          </span>
+          <span class="reviews__card-name">Gast aus der Türkei</span>
+          <span class="reviews__card-date">8. September 2025</span>
+          <span class="reviews__card-stars" aria-label="5 von 5 Sternen">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"/></svg>
+          </span>
+          <p class="reviews__card-quote">
+            Unkomplizierte Anreise, freundlicher Empfang, sehr sauber.
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       04 — WHY STAY WITH US
+       Editorial-Liste statt Icon-Karten, darunter der Business-Meeting-
+       Block im Layout der Konferenzsaal-Referenzseite (Bild + Fakten).
+       ============================================================ -->
+  <section class="whystay" id="why-stay" data-reveal-root>
+    <div class="whystay__inner">
+
+      <div class="whystay__head">
+        <p class="eyebrow"><span class="eyebrow__no">04</span> Why Stay With Us</p>
+        <h2 class="display">Fünf Gründe<br>für Hotel Gabi.</h2>
+      </div>
+
+      <div class="whystay__reasons">
+        <div class="whystay__reason rcard" data-reveal-step="0">
+          <span class="rcard__no">01</span>
+          <h3 class="rcard__title">Ideale Lage</h3>
+          <p class="rcard__text">Park „Erholung und Kultur", Mall Plovdiv und die Altstadt in wenigen Minuten erreichbar.</p>
+        </div>
+        <div class="whystay__reason rcard" data-reveal-step="1">
+          <span class="rcard__no">02</span>
+          <h3 class="rcard__title">Elegante Zimmer</h3>
+          <p class="rcard__text">Drei Kategorien vom Doppelzimmer bis zum Apartment, alle mit Klimaanlage, Minibar und kostenlosem WLAN.</p>
+        </div>
+        <div class="whystay__reason rcard" data-reveal-step="2">
+          <span class="rcard__no">03</span>
+          <h3 class="rcard__title">Persönlicher Service</h3>
+          <p class="rcard__text">Ein kleines Haus mit aufmerksamem Team — keine Warteschlangen, keine Anonymität.</p>
+        </div>
+        <div class="whystay__reason rcard" data-reveal-step="3">
+          <span class="rcard__no">04</span>
+          <h3 class="rcard__title">Relax-Bereich</h3>
+          <p class="rcard__text">Sauna, Solarium und Massage direkt im Haus — Erholung ohne Umweg.</p>
+        </div>
+        <div class="whystay__reason rcard" data-reveal-step="4">
+          <span class="rcard__no">05</span>
+          <h3 class="rcard__title">Für jeden Anlass</h3>
+          <p class="rcard__text">Von der Hochzeit bis zur Konferenz richten wir Ihre Feier oder Ihr Meeting im Haus aus.</p>
+        </div>
+      </div>
+
+      <div class="whystay__business split split--media-left" data-reveal>
+
+        <figure class="split__media arch" data-reveal>
+          <div class="arch__media" style="--img:url('assets/img/rooms/room-07.jpg')"></div>
+        </figure>
+
+        <div class="prose">
+          <p class="eyebrow">Konferenzsaal</p>
+          <h3 class="display whystay__business-title">Business-Meetings im<br>Hotel Gabi Plovdiv</h3>
+          <p>
+            Unser Konferenzsaal bietet 24 Plätze für Meetings und Veranstaltungen
+            — ausgestattet für Präsentationen, Seminare, Schulungen sowie Firmen-
+            und Privatveranstaltungen. Er lässt sich flexibel nach Art der
+            Veranstaltung einrichten.
+          </p>
+
+          <h4>Ausstattung des Konferenzsaals</h4>
+          <ul>
+            <li>Kostenloses High-Speed-WLAN</li>
+            <li>Magnetisches Flipchart</li>
+            <li>Full-HD-Bildschirm</li>
+            <li>Kabelloser Presenter</li>
+            <li>Aktive Lautsprecher (USB, SD, Akku)</li>
+            <li>Kabelloses Mikrofon</li>
+            <li>Multimedia-Projektor</li>
+          </ul>
+
+          <a class="link-lg" href="kontakt.html">
+            Kontaktieren Sie uns
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       05 — BUCHUNG  (Gestaltung vorbereitet, Logik folgt später)
+       ============================================================ -->
+  <section class="booking" id="booking" data-reveal-root>
+    <div class="booking__inner">
+
+      <header class="booking__head">
+        <p class="eyebrow eyebrow--light" data-reveal><span class="eyebrow__no">05</span> Buchung</p>
+        <h2 class="display display--light" data-reveal data-reveal-delay="1">
+          Ihr Zimmer wartet schon.<br>Buchen Sie jetzt.
+        </h2>
+      </header>
+
+      <form class="bookbar" data-reveal data-reveal-delay="2" novalidate>
+        <div class="bookbar__field">
+          <label for="b-in">Anreise</label>
+          <input id="b-in" type="date" name="checkin">
+        </div>
+        <div class="bookbar__field">
+          <label for="b-out">Abreise</label>
+          <input id="b-out" type="date" name="checkout">
+        </div>
+        <div class="bookbar__field">
+          <label for="b-guests">Gäste</label>
+          <select id="b-guests" name="guests">
+            <option>1 Gast</option>
+            <option selected>2 Gäste</option>
+            <option>3 Gäste</option>
+            <option>4 Gäste</option>
+          </select>
+        </div>
+        <div class="bookbar__field">
+          <label for="b-room">Kategorie</label>
+          <select id="b-room" name="room">
+            <option>Alle Kategorien</option>
+            <option>Garden Room</option>
+            <option>Terrace Loft</option>
+            <option>Gabi Suite</option>
+            <option>Pool Villa</option>
+            <option>Panorama Penthouse</option>
+          </select>
+        </div>
+        <button class="bookbar__submit" type="submit">
+          <span>Verfügbarkeit prüfen</span>
+        </button>
+      </form>
+
+      <p class="booking__hint" data-reveal data-reveal-delay="3" data-booking-hint role="status">
+        Die Buchungsstrecke folgt im nächsten Schritt — dieser Bereich ist gestalterisch vorbereitet.
+      </p>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer" id="contact">
+  <div class="footer__inner">
+    <span class="brand brand--sm">
+      <img class="brand__logo" src="assets/img/brand/gabi-logo.png"
+           alt="Hotel Gabi" width="640" height="228">
+    </span>
+    <p class="footer__addr">ul. Peruschtiza 17A, Plovdiv · +359 899 949 857</p>
+    <p class="footer__copy">© <span data-year>2026</span> Hotel Gabi</p>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

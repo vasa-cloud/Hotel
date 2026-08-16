@@ -1,0 +1,6 @@
+# Debug-Werkzeug, gehört nicht zur öffentlichen Website
+video-test.html
+
+# Systemdateien
+.DS_Store
+Thumbs.db

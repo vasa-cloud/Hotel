@@ -72,7 +72,6 @@
       <div class="hero__film">
         <video class="hero__video" data-film-video
                src="assets/video/hotel.mp4"
-               poster="assets/img/hero/hotel.jpg"
                muted playsinline preload="auto"
                disablepictureinpicture
                aria-label="Hotel Gabi — Ansicht des Hauses"></video>
@@ -140,7 +139,7 @@
         </svg>
 
         <article class="room arch" data-room>
-          <div class="arch__media" style="--img:url('assets/img/rooms/room-01.jpg'); background-position:75% center"></div>
+          <div class="arch__media" style="background-image:url('assets/img/rooms/room-01.jpg'), var(--img-fallback); background-position:75% center"></div>
           <div class="room__body">
             <p class="room__index">01</p>
             <h3 class="room__name">Standard-Doppelzimmer</h3>
@@ -150,7 +149,7 @@
         </article>
 
         <article class="room arch room--lift" data-room>
-          <div class="arch__media" style="--img:url('assets/img/rooms/room-02.jpg'); background-position:40% center"></div>
+          <div class="arch__media" style="background-image:url('assets/img/rooms/room-02.jpg'), var(--img-fallback); background-position:40% center"></div>
           <div class="room__body">
             <p class="room__index">02</p>
             <h3 class="room__name">Deluxe Doppelzimmer</h3>
@@ -160,7 +159,7 @@
         </article>
 
         <article class="room arch" data-room>
-          <div class="arch__media" style="--img:url('assets/img/rooms/room-03.jpg'); background-position:15% center"></div>
+          <div class="arch__media" style="background-image:url('assets/img/rooms/room-03.jpg'), var(--img-fallback); background-position:15% center"></div>
           <div class="room__body">
             <p class="room__index">03</p>
             <h3 class="room__name">Apartment für 2</h3>
@@ -170,7 +169,7 @@
         </article>
 
         <article class="room arch room--lift" data-room>
-          <div class="arch__media" style="--img:url('assets/img/rooms/room-04.jpg'); background-position:55% center"></div>
+          <div class="arch__media" style="background-image:url('assets/img/rooms/room-04.jpg'), var(--img-fallback); background-position:55% center"></div>
           <div class="room__body">
             <p class="room__index">04</p>
             <h3 class="room__name">For your special occasion</h3>
@@ -179,7 +178,7 @@
         </article>
 
         <article class="room arch" data-room>
-          <div class="arch__media" style="--img:url('assets/img/rooms/room-05.jpg'); background-position:60% center"></div>
+          <div class="arch__media" style="background-image:url('assets/img/rooms/room-05.jpg'), var(--img-fallback); background-position:60% center"></div>
           <div class="room__body">
             <p class="room__index">05</p>
             <h3 class="room__name">A romantic escape for two</h3>
@@ -188,7 +187,7 @@
         </article>
 
         <article class="room arch room--lift" data-room>
-          <div class="arch__media" style="--img:url('assets/img/rooms/room-06.jpg')"></div>
+          <div class="arch__media" style="background-image:url('assets/img/rooms/room-06.jpg'), var(--img-fallback)"></div>
           <div class="room__body">
             <p class="room__index">06</p>
             <h3 class="room__name">Congress events and exhibitions</h3>
@@ -354,7 +353,7 @@
       <div class="whystay__business split split--media-left" data-reveal>
 
         <figure class="split__media arch" data-reveal>
-          <div class="arch__media" style="--img:url('assets/img/rooms/room-07.jpg')"></div>
+          <div class="arch__media" style="background-image:url('assets/img/rooms/room-07.jpg'), var(--img-fallback)"></div>
         </figure>
 
         <div class="prose">

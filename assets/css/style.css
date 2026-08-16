@@ -550,15 +550,21 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 
 /* --- 6 · RÄUME --------------------------------------------- */
 
-/* 5a · Bogenform — die tragende Form der Raumbilder */
+/* 5a · Bogenform — die tragende Form der Raumbilder.
+   Das Foto wird pro Element per background-image direkt inline gesetzt
+   (siehe HTML), nicht über --img. Browser lösen url() in einer
+   CSS-Variable relativ zu DIESER Datei auf, nicht relativ zur HTML-Seite
+   — auf einem echten Server (anderer Ordner als die HTML-Datei) zeigt
+   sich das als 404. Direkt inline gesetzt löst der Browser relativ zur
+   HTML-Seite auf, wie erwartet. Ohne Foto bleibt nur der Verlauf. */
 .arch{ position:relative; }
 .arch__media{
   position:relative;                /* Bezug für den Schleier unten */
   width:100%; height:100%;
   border-radius:var(--arch-radius);
-  background-image:var(--img), var(--img-fallback);   /* fehlt die Datei, bleibt der Verlauf */
-  background-size:cover, cover;
-  background-position:center, center;
+  background-image:var(--img-fallback);
+  background-size:cover;
+  background-position:center;
   background-repeat:no-repeat;
   overflow:hidden;
   transform:translateZ(0);

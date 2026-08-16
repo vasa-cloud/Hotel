@@ -471,17 +471,60 @@
   }
 
   /* --- 8 · langSwitch -------------------------------------- */
-  /* Merkt sich die Sprachwahl und markiert sie. Die Übersetzung selbst
-     ist noch nicht angebunden — deshalb wird hier bewusst kein Text
-     ausgetauscht und nichts vorgetäuscht. */
+  /* Deutsch steht im HTML; Englisch und Bulgarisch kommen aus i18n.js
+     und werden über den deutschen Text nachgeschlagen.
+
+     Übersetzt werden Textknoten statt ganzer Elemente: Überschriften wie
+     „Mitten in<br>Plovdiv." bestehen aus mehreren Knoten, die einzeln
+     ersetzt werden müssen. Die deutsche Ausgangsfassung wird beim ersten
+     Lauf gesichert, damit der Rückweg nach DE verlustfrei ist. */
   function initLangSwitch() {
     var opts = document.querySelectorAll('[data-lang]');
-    if (!opts.length) return;
+    var dicts = window.GABI_I18N || {};
 
-    var stored = null;
-    try { stored = localStorage.getItem('gabi-lang'); } catch (err) {}
+    /* Leerraum normalisieren: &nbsp; wird im DOM zu  , die
+       Schlüssel in i18n.js verwenden aber normale Leerzeichen. */
+    function norm(s) {
+      return s.replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    /* Alle übersetzbaren Textknoten einsammeln — ohne Skript und Stil. */
+    var nodes = [];
+    (function collect(el) {
+      for (var i = 0; i < el.childNodes.length; i++) {
+        var n = el.childNodes[i];
+        if (n.nodeType === 3) {
+          if (norm(n.nodeValue)) nodes.push({ node: n, de: n.nodeValue });
+        } else if (n.nodeType === 1) {
+          var tag = n.nodeName;
+          if (tag === 'SCRIPT' || tag === 'STYLE') continue;
+          /* Der Sprachschalter selbst bleibt immer BG/EN/DE. */
+          if (n.classList && n.classList.contains('langswitch')) continue;
+          collect(n);
+        }
+      }
+    })(document.body);
+
+    var titleDe = document.title;
 
     function apply(lang) {
+      var dict = dicts[lang] || {};
+
+      nodes.forEach(function (item) {
+        if (lang === 'de' && !dict[norm(item.de)]) {
+          item.node.nodeValue = item.de;
+          return;
+        }
+        /* Führenden und folgenden Leerraum erhalten — sonst kleben
+           Wörter an Nachbar-Elementen wie <strong> fest. */
+        var m = item.de.match(/^(\s*)([\s\S]*?)(\s*)$/);
+        var t = dict[norm(m[2])];
+        item.node.nodeValue = t ? (m[1] + t + m[3]) : item.de;
+      });
+
+      document.title = dict[titleDe] || titleDe;
+      document.documentElement.lang = lang;
+
       Array.prototype.forEach.call(opts, function (o) {
         var on = o.getAttribute('data-lang') === lang;
         o.classList.toggle('is-active', on);
@@ -490,7 +533,9 @@
       });
     }
 
-    if (stored) apply(stored);
+    var stored = null;
+    try { stored = localStorage.getItem('gabi-lang'); } catch (err) {}
+    if (stored && stored !== 'de') apply(stored);
 
     Array.prototype.forEach.call(opts, function (o) {
       o.addEventListener('click', function () {

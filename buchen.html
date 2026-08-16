@@ -11,8 +11,11 @@
 
 <header class="header" data-header>
   <div class="header__inner">
-    <div class="header__left">
-      <a class="header__gallery" href="galerie.html" aria-label="Galerie ansehen">
+
+    <p class="header__tagline">Hotel in the heart of Plovdiv</p>
+
+    <nav class="header__nav" aria-label="Kurzwahl">
+      <a class="header__navlink" href="galerie.html">
         <span class="header__navring" aria-hidden="true">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4,6a2,2 0 0 1 2,-2h12a2,2 0 0 1 2,2v12a2,2 0 0 1 -2,2H6a2,2 0 0 1 -2,-2Z"/>
@@ -23,11 +26,6 @@
         </span>
         <span class="header__navlabel">Galerie</span>
       </a>
-    </div>
-
-    <p class="header__tagline">Hotel in the heart of Plovdiv</p>
-
-    <nav class="header__nav" aria-label="Kurzwahl">
       <a class="header__navlink" href="kontakt.html">
         <span class="header__navring" aria-hidden="true">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -138,35 +136,86 @@
 
       <div class="roomgrid">
 
-        <article class="roomgrid__item arch" data-reveal-step="0">
-          <div class="arch__media" style="background-image:url('assets/img/rooms/room-01.jpg'), var(--img-fallback); background-position:75% center"></div>
+        <a class="roomgrid__item arch room--link" href="zimmer-standard.html" data-reveal-step="0">
+          <div class="room__frame">
+            <div class="arch__media" style="background-image:url('assets/img/rooms/room-01.jpg'), var(--img-fallback); background-position:75% center"></div>
+            <div class="room__info">
+              <div class="room__info-top">
+                <span class="room__info-price">ab 180&nbsp;€</span>
+                <span class="room__info-size">2 Gäste</span>
+              </div>
+              <ul class="room__info-list">
+                <li>Flachbildfernseher und Minibar</li>
+                <li>Klimaanlage, kostenloses WLAN</li>
+                <li>Blick auf den Park</li>
+              </ul>
+              <span class="room__info-more">
+                Zimmer ansehen
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
           <div class="room__body">
             <p class="room__index">01</p>
             <h3 class="room__name">Standard-Doppelzimmer</h3>
             <p class="room__desc">Komfortabel und gemütlich, mit Flachbildfernseher, Minibar, Klimaanlage und kostenlosem WLAN.</p>
             <p class="room__price">ab <strong>180&nbsp;€</strong> / Nacht</p>
           </div>
-        </article>
+        </a>
 
-        <article class="roomgrid__item arch" data-reveal-step="1">
-          <div class="arch__media" style="background-image:url('assets/img/rooms/room-02.jpg'), var(--img-fallback); background-position:40% center"></div>
+        <a class="roomgrid__item arch room--link" href="zimmer-deluxe.html" data-reveal-step="1">
+          <div class="room__frame">
+            <div class="arch__media" style="background-image:url('assets/img/rooms/room-02.jpg'), var(--img-fallback); background-position:40% center"></div>
+            <div class="room__info">
+              <div class="room__info-top">
+                <span class="room__info-price">ab 240&nbsp;€</span>
+                <span class="room__info-size">2–3 Gäste</span>
+              </div>
+              <ul class="room__info-list">
+                <li>Sofa-Bett als zusätzliches Bett</li>
+                <li>Klimaanlage, Minibar, TV, WLAN</li>
+                <li>Blick auf Mall Plovdiv und Park</li>
+              </ul>
+              <span class="room__info-more">
+                Zimmer ansehen
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
           <div class="room__body">
             <p class="room__index">02</p>
             <h3 class="room__name">Deluxe Doppelzimmer</h3>
             <p class="room__desc">Modernes Zimmer mit Sofa-Bett als Zusatzbett. Blick auf die Mall Plovdiv und den Park.</p>
             <p class="room__price">ab <strong>240&nbsp;€</strong> / Nacht</p>
           </div>
-        </article>
+        </a>
 
-        <article class="roomgrid__item arch" data-reveal-step="2">
-          <div class="arch__media" style="background-image:url('assets/img/rooms/room-03.jpg'), var(--img-fallback); background-position:15% center"></div>
+        <a class="roomgrid__item arch room--link" href="zimmer-apartment.html" data-reveal-step="2">
+          <div class="room__frame">
+            <div class="arch__media" style="background-image:url('assets/img/rooms/room-03.jpg'), var(--img-fallback); background-position:15% center"></div>
+            <div class="room__info">
+              <div class="room__info-top">
+                <span class="room__info-price">ab 380&nbsp;€</span>
+                <span class="room__info-size">2–4 Gäste</span>
+              </div>
+              <ul class="room__info-list">
+                <li>Schlafzimmer und zusätzliches Doppelbett</li>
+                <li>Bad mit Dusche, eigene Terrasse</li>
+                <li>Zwei Fernseher, romantische Beleuchtung</li>
+              </ul>
+              <span class="room__info-more">
+                Zimmer ansehen
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m0 0-6-6m6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
           <div class="room__body">
             <p class="room__index">03</p>
             <h3 class="room__name">Apartment für 2</h3>
             <p class="room__desc">Schlafzimmer, zusätzliches Doppelbett, Bad mit Dusche und eigene Terrasse.</p>
             <p class="room__price">ab <strong>380&nbsp;€</strong> / Nacht</p>
           </div>
-        </article>
+        </a>
 
       </div>
     </div>
@@ -230,6 +279,7 @@
   </div>
 </footer>
 
+<script src="assets/js/i18n.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

@@ -258,6 +258,8 @@ window.GABI_I18N = {
     "Dieses Zimmer reservieren?": "Reserve this room?",
 
     /* Galerie */
+    "Schauen Sie tiefer": "Look deeper",
+    "in das Hotel Gabi hinein.": "into Hotel Gabi.",
     "Das Haus": "The house",
     "in Bildern.": "in pictures.",
     "Zimmer, Foyer, Konferenzsaal und Restaurant — ein Rundgang durch Hotel Gabi.":
@@ -511,6 +513,8 @@ window.GABI_I18N = {
     "interessant.": "си заслужава.",
     "Dieses Zimmer reservieren?": "Да резервираме тази стая?",
 
+    "Schauen Sie tiefer": "Погледнете по-навътре",
+    "in das Hotel Gabi hinein.": "в Хотел Габи.",
     "Das Haus": "Хотелът",
     "in Bildern.": "в снимки.",
     "Zimmer, Foyer, Konferenzsaal und Restaurant — ein Rundgang durch Hotel Gabi.":

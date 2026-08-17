@@ -1237,8 +1237,6 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
   .gallery{ grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @media (max-width:560px){
-  .gallery{ grid-template-columns:1fr; }
-  .footer__grid{ grid-template-columns:1fr; }
   .pricetable th{ font-size:.92rem; }
   .pricetable td{ font-size:1.05rem; }
 }
@@ -1314,6 +1312,46 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 @media (max-width:520px){
   /* etwas kleiner, damit die Zeile auch auf schmalen Geräten einzeilig bleibt */
   .langswitch{ gap:1rem; padding:.45rem 1rem; }
+}
+
+/* ------------------------------------------------------------------
+   HANDY — steht bewusst als letzter Block, damit diese Regeln nicht
+   von den breiteren Bereichen darüber überschrieben werden. Genau das
+   war beim Footer passiert: die Ein-Spalten-Regel stand vorher weiter
+   oben und wurde von der Zwei-Spalten-Regel wieder aufgehoben.
+   ------------------------------------------------------------------ */
+@media (max-width:640px){
+
+  /* Etwas mehr Luft zum Rand — 20 px wirkten gedrängt. */
+  :root{ --gutter:1.5rem; --sect-y:clamp(3.5rem,9vh,5.5rem); }
+
+  /* Hero: der Schriftzug war mit 54 px zu klein für ein Vollbild. */
+  .hero__title .mask__i{ font-size:clamp(3.75rem,19vw,6rem); }
+  .hero__title .mask:first-child .mask__i{ font-size:clamp(1rem,4.6vw,1.6rem); }
+  .hero__stage{ padding-top:clamp(4.5rem,11vh,6rem); }
+  .hero__grid{ gap:.75rem; }
+  .hero__foot{ gap:1rem; }
+
+  /* Galerie: eine Spalte ergab knapp 5000 px Scrollweg. */
+  .gallery{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:.6rem; }
+  .gallery__item{ border-radius:14px; }
+
+  /* Footer wirklich einspaltig, Karte bekommt volle Breite. */
+  .footer__grid{ grid-template-columns:1fr; gap:2rem; }
+  .footer__map{ aspect-ratio:16 / 10; }
+  .footer__bank code{ font-size:.78rem; word-break:break-all; }
+
+  /* Zimmerkarten in der Reihe: waren fast bildschirmhoch. */
+  .room{ width:min(78vw,300px); }
+  .room .arch__media{ height:clamp(240px,34vh,300px); }
+
+  /* Überschriften auf Unterseiten etwas kompakter. */
+  .pagehead{ padding-top:clamp(6rem,14vh,8rem); }
+  .pagehead .display{ font-size:clamp(2rem,9vw,2.8rem); }
+  .sectionhead .display{ font-size:clamp(1.5rem,7vw,2rem); }
+
+  /* Zahlenband nebeneinander statt untereinander. */
+  .statband{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.5rem; }
 }
 
 /* Barrierefreiheit: Bewegung aus */

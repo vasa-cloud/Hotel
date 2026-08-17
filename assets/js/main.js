@@ -10,6 +10,7 @@
      5. filmScrub      — vertikales Scrollen → Videozeit
      6. roomsRail      — vertikales Scrollen → horizontale Bewegung
      7. bookingStub    — Platzhalter-Verhalten, Logik folgt später
+     7b. heroMotion    — Hero-Bewegung auf schmalen Screens
      8. langSwitch     — Sprachwahl merken (Übersetzung folgt)
    ============================================================ */
 (function () {
@@ -500,6 +501,79 @@
     });
   }
 
+  /* --- 7b · heroMotion ------------------------------------- */
+  /* Auf schmalen Screens wird der Hero nicht angeheftet, das Video läuft
+     dort in Schleife — es gab also keinerlei Scroll-Bewegung. Diese
+     Ergänzung koppelt Zoom und Ausblenden an die Scrollposition.
+
+     Bewusst nur transform und opacity: beides läuft auf Mobilgeräten in
+     der GPU und bleibt flüssig, anders als Videosprünge. */
+  function initHeroMotion() {
+    var section = document.querySelector('[data-film]');
+    if (!section) return;
+
+    var video = section.querySelector('[data-film-video]');
+    var grid = section.querySelector('.hero__grid');
+    var foot = section.querySelector('.hero__foot');
+    if (!video || !grid) return;
+
+    var running = false;
+    var visible = false;
+
+    /* Greift nur, solange die Bühne NICHT angeheftet ist — auf dem
+       Desktop übernimmt der Film selbst die Bewegung. */
+    function active() {
+      return !section.classList.contains('is-pinned') && !motionOff();
+    }
+
+    function reset() {
+      video.style.transform = '';
+      grid.style.opacity = '';
+      grid.style.transform = '';
+      if (foot) foot.style.opacity = '';
+    }
+
+    function frame() {
+      if (!running) return;
+
+      if (!active()) { reset(); running = false; return; }
+
+      var travel = section.offsetHeight || 1;
+      var p = clamp(-section.getBoundingClientRect().top / travel, 0, 1);
+
+      video.style.transform = 'scale(' + (1 + p * 0.12).toFixed(4) + ')';
+
+      var o = clamp(1 - p * 1.7, 0, 1);
+      grid.style.opacity = o.toFixed(3);
+      grid.style.transform = 'translateY(' + (p * -48).toFixed(1) + 'px)';
+      if (foot) foot.style.opacity = o.toFixed(3);
+
+      if (visible) requestAnimationFrame(frame);
+      else { running = false; }
+    }
+
+    function start() {
+      if (running || !active()) return;
+      running = true;
+      requestAnimationFrame(frame);
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        if (visible) start(); else reset();
+      }, { rootMargin: '10% 0px 10% 0px' }).observe(section);
+    } else {
+      visible = true;
+      start();
+    }
+
+    window.addEventListener('resize', debounce(function () {
+      reset();
+      if (visible) start();
+    }, 160));
+  }
+
   /* --- 8 · langSwitch -------------------------------------- */
   /* Deutsch steht im HTML; Englisch und Bulgarisch kommen aus i18n.js
      und werden über den deutschen Text nachgeschlagen.
@@ -587,6 +661,7 @@
     initFilmScrub();
     initRoomsRail();
     initBookingStub();
+    initHeroMotion();
     initLangSwitch();
   }
 

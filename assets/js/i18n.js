@@ -266,6 +266,40 @@ window.GABI_I18N = {
     "Gefällt Ihnen, was Sie sehen?": "Like what you see?",
     "Jetzt buchen": "Book now",
 
+    /* Footer */
+    "Seite auf Facebook ansehen": "View page on Facebook",
+    "In Google Maps öffnen": "Open in Google Maps",
+    "Information": "Information",
+    "Preise": "Prices",
+    "Allgemeine Bedingungen": "General terms",
+    "Cookie-Richtlinie": "Cookie policy",
+    "Bankverbindung": "Bank details",
+    "DSK Bank": "DSK Bank",
+    "Hotel Gabi Plovdiv — Stil und Gemütlichkeit nahe Ruderkanal und Mall Plovdiv":
+      "Hotel Gabi Plovdiv — style and cosiness near the Rowing base and Mall Plovdiv",
+    /* Preisliste */
+    "Was Ihr Aufenthalt": "What your stay",
+    "kostet.": "costs.",
+    "Preise pro Nacht. Kostenloses WLAN und Kurtaxe sind enthalten.":
+      "Prices per night. Free Wi-Fi and tourist tax are included.",
+    "Studio": "Studio",
+    "Zusatzbett": "Extra bed",
+    "Frühstück pro Person": "Breakfast per person",
+    "Parkplatz pro Tag": "Parking per day",
+    "Konferenzsaal pro Tag": "Conference hall per day",
+    "Kinder": "Children",
+    "Kinder unter 6 Jahren übernachten kostenfrei.": "Children under 6 stay free of charge.",
+    "Bis 12:00 Uhr. Später von 12:30 bis 16:00 gegen 50 % des Zimmerpreises.":
+      "Until 12:00. Later, from 12:30 to 16:00, for 50% of the room rate.",
+    "Kartenzahlung": "Card payment",
+    "Bei Zahlung mit Kredit- oder Debitkarte fallen 5 % Aufschlag an.":
+      "Credit and debit card payments carry a 5% surcharge.",
+    "Zu Feiertagen, Sportveranstaltungen und während der Internationalen Messe Plovdiv können abweichende Preise gelten.":
+      "Rates may differ on public holidays, during sporting events and the Plovdiv International Fair.",
+    "Parkplatz am Haus": "Parking at the hotel",
+    "Eigene Stellplätze direkt vor dem Eingang.": "Our own spaces right by the entrance.",
+    "Parkplatz direkt am Haus, der Schlüssel liegt bereit.": "Parking right by the hotel, your key is ready.",
+
     /* Seitentitel */
     "About Us — Hotel Gabi": "About Us — Hotel Gabi",
     "Kontakt — Hotel Gabi": "Contact — Hotel Gabi",
@@ -519,6 +553,40 @@ window.GABI_I18N = {
       "Стаи, лоби, конферентна зала и ресторант — обиколка из Хотел Габи.",
     "Gefällt Ihnen, was Sie sehen?": "Харесва ли ви това, което виждате?",
     "Jetzt buchen": "Резервирайте сега",
+
+    /* Footer */
+    "Seite auf Facebook ansehen": "Вижте страницата във Facebook",
+    "In Google Maps öffnen": "Отвори в Google Maps",
+    "Information": "Информация",
+    "Preise": "Цени",
+    "Allgemeine Bedingungen": "Общи условия",
+    "Cookie-Richtlinie": "Политика за бисквитки",
+    "Bankverbindung": "Банкови детайли",
+    "DSK Bank": "ДСК Банк",
+    "Hotel Gabi Plovdiv — Stil und Gemütlichkeit nahe Ruderkanal und Mall Plovdiv":
+      "Хотел Габи Пловдив — стил и уют близо до Гребната база и Мол Пловдив",
+    /* Preisliste */
+    "Was Ihr Aufenthalt": "Колко струва",
+    "kostet.": "вашият престой.",
+    "Preise pro Nacht. Kostenloses WLAN und Kurtaxe sind enthalten.":
+      "Цени на нощувка. Безплатен Wi-Fi и туристическа такса са включени.",
+    "Studio": "Студио",
+    "Zusatzbett": "Допълнително легло",
+    "Frühstück pro Person": "Закуска на човек",
+    "Parkplatz pro Tag": "Паркинг на ден",
+    "Konferenzsaal pro Tag": "Конферентна зала на ден",
+    "Kinder": "Деца",
+    "Kinder unter 6 Jahren übernachten kostenfrei.": "Деца под 6 години са безплатно.",
+    "Bis 12:00 Uhr. Später von 12:30 bis 16:00 gegen 50 % des Zimmerpreises.":
+      "До 12:00 ч. По-късно, от 12:30 до 16:00 ч., срещу 50% от цената на стаята.",
+    "Kartenzahlung": "Плащане с карта",
+    "Bei Zahlung mit Kredit- oder Debitkarte fallen 5 % Aufschlag an.":
+      "При плащане с кредитна или дебитна карта се начислява 5% надбавка.",
+    "Zu Feiertagen, Sportveranstaltungen und während der Internationalen Messe Plovdiv können abweichende Preise gelten.":
+      "По време на празници, спортни събития и Международния панаир Пловдив цените могат да се различават.",
+    "Parkplatz am Haus": "Паркинг при хотела",
+    "Eigene Stellplätze direkt vor dem Eingang.": "Собствени места точно пред входа.",
+    "Parkplatz direkt am Haus, der Schlüssel liegt bereit.": "Паркинг точно до хотела, ключът ви очаква.",
 
     "About Us — Hotel Gabi": "За нас — Хотел Габи",
     "Kontakt — Hotel Gabi": "Контакти — Хотел Габи",

@@ -491,6 +491,35 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
   display:grid; gap:clamp(1rem,1.8vw,1.5rem);
   grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
 }
+.cardgrid--spaced{ margin-top:clamp(2rem,4vh,3rem); }
+
+/* Preistabelle — Zeilen durch Haarlinien getrennt, Betrag rechts in der
+   Display-Schrift; Ziffern mit tabular-nums, damit sie untereinander
+   sauber stehen. */
+.pricetable{
+  width:100%;
+  border-collapse:collapse;
+  text-align:left;
+}
+.pricetable__caption{
+  caption-side:top;
+  text-align:left;
+  padding-bottom:1rem;
+  font-size:.85rem; color:var(--ink-60);
+}
+.pricetable tr{ border-top:1px solid var(--hair); }
+.pricetable tr:last-child{ border-bottom:1px solid var(--hair); }
+.pricetable th{
+  font-weight:400; font-size:1rem; color:var(--ink);
+  padding:.9rem 1rem .9rem 0;
+}
+.pricetable td{
+  font-family:var(--font-display);
+  font-size:1.15rem; color:var(--red);
+  font-variant-numeric:tabular-nums;
+  text-align:right; white-space:nowrap;
+  padding:.9rem 0;
+}
 
 /* Zahlenband — große Ziffern in der Display-Schrift, echte Hausdaten. */
 .statband{
@@ -1001,16 +1030,129 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 }
 
 /* --- 10 · FOOTER -------------------------------------------- */
+/* Dunkler Abschluss auf --ink, damit die Seite fest endet statt
+   auszulaufen. Keine neue Farbe — --ink ist die Textfarbe der Seite. */
 .footer{
-  background:var(--white);
-  padding:clamp(3rem,8vh,5rem) var(--gutter);
-  border-top:1px solid var(--hair);
+  background:var(--ink);
+  color:var(--white);
+  padding:clamp(3.5rem,9vh,6rem) var(--gutter) clamp(2rem,4vh,3rem);
 }
-.footer__inner{
+.footer__inner{ max-width:1180px; margin-inline:auto; }
+
+.footer__grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr);
+  gap:clamp(1.75rem,3.5vw,3rem);
+  align-items:start;
+}
+
+.footer__label{
+  font-size:.66rem; letter-spacing:.22em; text-transform:uppercase;
+  color:rgba(255,255,255,.5);
+  margin-bottom:1rem;
+}
+
+/* Facebook-Karte: echter Verweis auf die Seite, kein Fremd-Skript. */
+.footer__fb{
+  display:flex; align-items:center; gap:.85rem;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:14px;
+  padding:.9rem 1rem;
+  transition:background-color .45s var(--ease), border-color .45s var(--ease);
+}
+.footer__fb:hover{
+  background:rgba(255,255,255,.11);
+  border-color:rgba(255,255,255,.3);
+}
+.footer__fb-icon{
+  width:38px; height:38px; flex:none;
+  display:grid; place-items:center;
+  border-radius:9px;
+  background:var(--red); color:var(--white);
+}
+.footer__fb-icon svg{ width:19px; height:19px; }
+.footer__fb-name{ font-size:.92rem; line-height:1.3; }
+.footer__fb-sub{ font-size:.72rem; color:rgba(255,255,255,.55); }
+
+/* Karte: als iframe eingebettet, damit sie wirklich bedienbar ist. */
+.footer__map{
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.14);
+  aspect-ratio:4 / 3;
+  background:rgba(255,255,255,.06);
+}
+.footer__map iframe{
+  width:100%; height:100%;
+  border:0; display:block;
+  filter:grayscale(.25);
+}
+.footer__maplink{
+  display:inline-flex; align-items:center; gap:.45rem;
+  margin-top:.7rem;
+  font-size:.78rem; color:rgba(255,255,255,.7);
+  border-bottom:1px solid rgba(255,255,255,.25);
+  transition:color .4s var(--ease), border-color .4s var(--ease);
+}
+.footer__maplink:hover{ color:var(--white); border-color:var(--white); }
+.footer__maplink svg{ width:13px; height:13px; }
+
+.footer__links{
+  list-style:none; margin:0 0 1.75rem; padding:0;
+  display:flex; flex-direction:column; gap:.55rem;
+}
+.footer__links a{
+  font-size:.88rem; color:rgba(255,255,255,.72);
+  transition:color .4s var(--ease);
+}
+.footer__links a:hover{ color:var(--white); }
+
+.footer__bank{ font-size:.8rem; line-height:1.65; color:rgba(255,255,255,.62); }
+.footer__bank strong{ color:var(--white); font-weight:500; }
+.footer__bank code{
+  font-family:var(--font-sans);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.02em;
+}
+
+/* Der Claim trägt die rechte Spalte — Display-Schrift, viel Zeilenfall. */
+.footer__claim{
+  font-family:var(--font-display); font-weight:400;
+  font-size:clamp(1.5rem,2.6vw,2.15rem);
+  line-height:1.2;
+  color:var(--white);
+}
+.footer__social{
+  display:flex; gap:.6rem; flex-wrap:wrap;
+  margin-top:clamp(1.25rem,2.5vh,1.75rem);
+}
+.footer__social a{
+  width:38px; height:38px;
+  display:grid; place-items:center;
+  border:1px solid rgba(255,255,255,.22); border-radius:50%;
+  color:rgba(255,255,255,.8);
+  transition:background-color .4s var(--ease), border-color .4s var(--ease),
+             color .4s var(--ease), transform .4s var(--ease);
+}
+.footer__social a svg{ width:16px; height:16px; }
+.footer__social a:hover{
+  background:var(--red); border-color:var(--red); color:var(--white);
+  transform:translateY(-3px);
+}
+
+/* Fußzeile unter dem Raster */
+.footer__base{
+  margin-top:clamp(2.5rem,5vh,3.5rem);
+  padding-top:clamp(1.25rem,2.5vh,1.75rem);
+  border-top:1px solid rgba(255,255,255,.14);
   display:flex; align-items:center; justify-content:space-between;
-  gap:1.5rem; flex-wrap:wrap;
+  gap:1.25rem; flex-wrap:wrap;
 }
-.footer__addr, .footer__copy{ font-size:.78rem; color:var(--ink-60); }
+.footer__addr, .footer__copy{ font-size:.78rem; color:rgba(255,255,255,.55); }
+/* Das Logo steht auf dunklem Grund — der weiße Sockel darunter würde
+   auffallen, deshalb bleibt es ohne Zusatz und nur etwas kleiner. */
+.footer .brand--sm .brand__logo{ height:32px; }
 
 /* --- 11 · REVEAL / MOTION ----------------------------------- */
 [data-reveal]{
@@ -1096,6 +1238,9 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 }
 @media (max-width:560px){
   .gallery{ grid-template-columns:1fr; }
+  .footer__grid{ grid-template-columns:1fr; }
+  .pricetable th{ font-size:.92rem; }
+  .pricetable td{ font-size:1.05rem; }
 }
 
 /* Ohne echten Hover (Touch) wären die Zimmerinfos nie erreichbar —
@@ -1159,7 +1304,11 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
   .bookbar__submit{ grid-column:1 / -1; padding-block:1.15rem; }
 
   .hero__foot{ flex-direction:column; align-items:flex-start; gap:1.5rem; }
-  .footer__inner{ flex-direction:column; align-items:flex-start; }
+
+  /* Footer-Spalten stapeln: Claim zuerst, dann die Detailspalten. */
+  .footer__grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .footer__claim-col{ grid-column:1 / -1; order:-1; }
+  .footer__base{ flex-direction:column; align-items:flex-start; }
 }
 
 @media (max-width:520px){

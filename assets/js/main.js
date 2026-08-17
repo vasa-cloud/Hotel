@@ -672,14 +672,29 @@
       var id = frame.getAttribute('data-youtube');
       var thumb = frame.querySelector('.videoframe__thumb');
 
-      /* Nicht jedes Video hat ein maxres-Vorschaubild — dann die
-         kleinere Fassung nehmen statt ein leeres Feld zu zeigen. */
+      /* Nicht jedes Video hat ein maxres-Vorschaubild. YouTube antwortet
+         dann aber NICHT mit einem Fehler, sondern liefert ein graues
+         Platzhalterbild in 120×90 — auf volle Breite gezogen sähe das
+         aus wie ein Ladefehler. Deshalb wird die Größe geprüft, nicht
+         nur auf einen Fehler gewartet. */
       if (thumb) {
-        thumb.addEventListener('error', function () {
-          if (thumb.dataset.fallback) return;
-          thumb.dataset.fallback = '1';
-          thumb.src = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
+        var stufen = ['sddefault', 'hqdefault'];
+
+        function naechsteStufe() {
+          var s = stufen.shift();
+          if (!s) return;
+          thumb.src = 'https://i.ytimg.com/vi/' + id + '/' + s + '.jpg';
+        }
+
+        thumb.addEventListener('load', function () {
+          if (thumb.naturalWidth > 0 && thumb.naturalWidth <= 120) naechsteStufe();
         });
+        thumb.addEventListener('error', naechsteStufe);
+
+        /* Bereits fertig geladen, bevor die Zuhörer hingen? */
+        if (thumb.complete && thumb.naturalWidth > 0 && thumb.naturalWidth <= 120) {
+          naechsteStufe();
+        }
       }
 
       function laden() {

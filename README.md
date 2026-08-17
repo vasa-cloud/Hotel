@@ -1,71 +1,81 @@
-# Hotel Gabi — Startseite
+# Hotel Gabi — Website
 
-Erste Ausbaustufe: **Hero → Räume → Buchung**.
-Keine Abhängigkeiten, kein Build-Schritt, kein Node nötig.
+Reines HTML/CSS/JavaScript. **Kein Build-Schritt, keine Abhängigkeiten** —
+`index.html` doppelklicken genügt zum Ansehen.
 
-## Öffnen
+- **Live:** https://hotel-one-indol.vercel.app
+- **Code:** https://github.com/vasa-cloud/Hotel
+- Vercel baut bei jedem `git push` automatisch neu.
 
-`index.html` doppelklicken. Das war's.
-
-## Dateien
+## Aufbau
 
 ```
-index.html                 Struktur der Startseite
-assets/css/style.css       Gestaltung (nummerierte Abschnitte 1–9)
-assets/js/main.js          Interaktion (6 Module, kommentiert)
-assets/img/README.md       wo welche Fotos hingehören
+index.html            Startseite
+buchen.html           Buchung, Kategorien, Preisliste, Ablauf
+galerie.html          19 Fotos, Vergrößerung beim Antippen
+about.html            Über das Haus, Ausstattung, Anfahrt
+kontakt.html          Kontaktwege, Anfahrt
+zimmer-standard.html  ┐
+zimmer-deluxe.html    ├ Detailseiten der drei Kategorien
+zimmer-apartment.html ┘
+video-test.html       Werkzeug zur Fehlersuche, nicht Teil der Website
+
+assets/css/style.css  Gestaltung, nummerierte Abschnitte 1–12
+assets/js/main.js     Interaktion, nummerierte Module
+assets/js/i18n.js     Übersetzungen EN + BG
+assets/img/           brand · rooms · gallery
+assets/video/         hotel.mp4 (Hero, 6,2 MB)
 ```
 
-## Was bereits umgesetzt ist
+### Wichtig zum Verständnis
 
-- **Header** — nur Wortmarke „Hotel Gabi". Kein Sign-In, kein Hamburger, keine Buttons.
-- **Hero** — „HOTEL" klein und dunkel, „Gabi" groß in Rot, darunter das Hotelvideo
-  in voller Breite als Hauptmotiv. Beide Zeilen steigen beim Laden aus einer Maske.
-- **Video am Scrollrad** — das Video läuft nicht von selbst. Die Hero-Bühne bleibt
-  stehen, und die Scrollposition bestimmt die Zeitmarke im Film: weiter runter
-  scrollen = weiter im Video, hoch scrollen = zurück. Ist der Film durch, gibt
-  die Bühne die Seite frei und die Räume folgen. Der Laufbalken unten zeigt den Stand.
-  Tempo über `PX_PER_SECOND` in `assets/js/main.js` (Standard 320 px pro Filmsekunde,
-  bei 8 s also ca. 2560 px Scrollweg).
-- **Räume** — fünf Bilder in **Bogenform** (oben halbrund, unten gerade),
-  versetzt gesetzt, verbunden durch eine feine gepunktete Linie.
-- **Horizontaler Scroll** — vertikales Scrollen bewegt die Bilderreihe nach links.
-  Die Sektion ist genau so hoch wie die Reihe breit ist, dadurch koppelt sich
-  die Bewegung 1:1 an das Scrollrad. Ein leichter Nachlauf glättet sie.
-- **Buchung** — rote Sektion mit gestalteter Suchleiste. Optik fertig,
-  Logik bewusst noch nicht angebunden.
+**Sprache:** Deutsch steht direkt im HTML. Englisch und Bulgarisch liegen
+in `i18n.js` und werden über den **deutschen Text als Schlüssel**
+nachgeschlagen. Wer deutschen Text ändert, muss den Schlüssel in `i18n.js`
+mitändern — sonst fällt die Stelle beim Umschalten auf Deutsch zurück.
 
-## Verhalten nach Bildschirmgröße
+**CSS-Reihenfolge:** Die Handy-Regeln stehen bewusst als **letzter Block**
+in `style.css`. Bei gleicher Gewichtung gewinnt die spätere Regel — genau
+daran war der Footer auf dem Handy schon einmal zweispaltig hängen
+geblieben. Neue Handy-Regeln also dort einfügen, nicht weiter oben.
 
-| Breite | Video | Räume |
-|---|---|---|
-| ≥ 860 px | angeheftet, Zeitmarke folgt dem Scrollen | angeheftet, Bewegung folgt dem Scrollen |
-| < 860 px | läuft stumm in Schleife | native horizontale Wischgeste mit Einrasten |
+**Bildpfade:** Zimmerbilder werden per `background-image` direkt im HTML
+gesetzt, nicht über eine CSS-Variable. Ein `url()` in einer CSS-Variablen
+löst der Browser relativ zur **Stylesheet-Datei** auf, was auf dem Server
+zu 404 führte.
 
-Auf mobilen Browsern ist Video-Scrubbing unzuverlässig — beim Seeken wird oft kein
-Frame gerendert. Deshalb dort bewusst die Schleife statt eines kaputten Effekts.
+## Preise (Stand: von hotelgabi-bg.com übernommen)
 
-Bei `prefers-reduced-motion` fällt alles auf ruhige Darstellung ohne Bewegung zurück.
+| | |
+|---|---|
+| Standard-Doppelzimmer | 85 BGN |
+| Deluxe Doppelzimmer | 105 BGN |
+| Studio | 140 BGN |
+| Zusatzbett | 30 BGN |
+| Frühstück pro Person | 15 BGN |
+| Parkplatz pro Tag | 15 BGN |
+| Konferenzsaal pro Tag | 120 BGN |
+
+Enthalten: WLAN, Kurtaxe. Kinder unter 6 kostenfrei. Späte Abreise
+12:30–16:00 gegen 50 %. Kartenzahlung +5 %.
 
 ## Offen
 
-1. **Standbild für den Hero** → `assets/img/hero/hotel.jpg`
-   Dient als Poster, solange das Video lädt, und als Rückfall, wenn es fehlt.
-   Am besten ein Frame aus dem Video selbst.
-2. **Raumfotos** → `assets/img/rooms/room-01.jpg` … `room-05.jpg`
-3. **Logo** → sobald es vorliegt, ersetzt es die Wortmarke im Header und Footer
-4. Adresse im Footer und die Angaben unter dem Hero sind Platzhalter
-5. Buchungsstrecke anbinden → `initBookingStub()` in `assets/js/main.js`
+**Vor dem Livegang zwingend:**
+1. **Gästebewertungen ersetzen** — die vier auf der Startseite sind
+   erfunden. Gefälschte Bewertungen sind in der EU verboten.
+2. **Allgemeine Bedingungen und Cookie-Richtlinie** verweisen noch auf
+   hotelgabi-bg.com und müssen mitwandern.
 
-Details zu den Bildern in `assets/img/README.md`.
+**Zu klären (widersprüchliche Angaben in den Quellen):**
+3. Parkplatz kostenlos oder 15 BGN pro Tag?
+4. Konferenzsaal 24 oder 45 Plätze?
+5. Dritte Kategorie: „Apartment für 2" oder „Studio"?
+6. Rezeptionszeiten und Quadratmeterzahlen fehlen ganz.
+7. Instagram-Link zeigt auf `hotelcapriplovdiv` — richtig?
 
-## Farben
-
-| Token | Wert | Rolle |
-|---|---|---|
-| `--red` | `#B01B2E` | Primärfarbe |
-| `--red-deep` | `#7A0F1E` | Tiefe, Hover, Schleier über Fotos |
-| `--white` / `--paper` | `#FFFFFF` / `#FBF9F8` | Flächen |
-| `--ink` | `#16110F` | Text |
-
-Mehr Farben gibt es bewusst nicht.
+**Danach:**
+8. Buchungsstrecke anbinden (bisher nur gestaltet, siehe
+   `initBookingStub` in `main.js`).
+9. Bulgarische Texte von Muttersprachler gegenlesen lassen.
+10. Eigene Domain statt der Vercel-Adresse.

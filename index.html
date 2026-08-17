@@ -456,6 +456,29 @@
         </div>
       </div>
 
+      <!-- Hotelvideo. Erst beim Klick wird YouTube geladen — vorher steht
+           hier nur das Vorschaubild. Das hält die Seite schnell und setzt
+           keine Fremd-Cookies, solange niemand abspielt. -->
+      <div class="videoblock">
+        <div class="sectionhead" data-reveal>
+          <p class="eyebrow">Video</p>
+          <h3 class="display">Sehen Sie<br>selbst.</h3>
+        </div>
+
+        <div class="videoframe" data-youtube="Oq0vqJdoRPU" data-reveal>
+          <img class="videoframe__thumb"
+               src="https://i.ytimg.com/vi/Oq0vqJdoRPU/maxresdefault.jpg"
+               alt="Hotel Gabi Plovdiv — Video"
+               loading="lazy" width="1280" height="720">
+          <button class="videoframe__play" type="button" aria-label="Video abspielen">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 5.5v13l11-6.5-11-6.5Z" style="fill:currentColor;stroke:none"/>
+            </svg>
+          </button>
+          <span class="videoframe__hint">Beim Abspielen wird YouTube geladen</span>
+        </div>
+      </div>
+
       <div class="whystay__business split split--media-left" data-reveal>
 
         <figure class="split__media arch" data-reveal>

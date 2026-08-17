@@ -300,6 +300,12 @@ window.GABI_I18N = {
     "Eigene Stellplätze direkt vor dem Eingang.": "Our own spaces right by the entrance.",
     "Parkplatz direkt am Haus, der Schlüssel liegt bereit.": "Parking right by the hotel, your key is ready.",
 
+    /* Video */
+    "Video": "Video",
+    "Sehen Sie": "See it",
+    "selbst.": "for yourself.",
+    "Beim Abspielen wird YouTube geladen": "Playing will load YouTube",
+
     /* Seitentitel */
     "About Us — Hotel Gabi": "About Us — Hotel Gabi",
     "Kontakt — Hotel Gabi": "Contact — Hotel Gabi",
@@ -587,6 +593,12 @@ window.GABI_I18N = {
     "Parkplatz am Haus": "Паркинг при хотела",
     "Eigene Stellplätze direkt vor dem Eingang.": "Собствени места точно пред входа.",
     "Parkplatz direkt am Haus, der Schlüssel liegt bereit.": "Паркинг точно до хотела, ключът ви очаква.",
+
+    /* Video */
+    "Video": "Видео",
+    "Sehen Sie": "Вижте",
+    "selbst.": "сами.",
+    "Beim Abspielen wird YouTube geladen": "При пускане се зарежда YouTube",
 
     "About Us — Hotel Gabi": "За нас — Хотел Габи",
     "Kontakt — Hotel Gabi": "Контакти — Хотел Габи",

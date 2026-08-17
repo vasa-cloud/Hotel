@@ -12,6 +12,7 @@
      7. bookingStub    — Platzhalter-Verhalten, Logik folgt später
      7b. heroMotion    — Hero-Bewegung auf schmalen Screens
      7c. lightbox      — Galeriebilder vergrößert anzeigen
+     7d. youtube       — Player erst auf Klick laden
      8. langSwitch     — Sprachwahl merken (Übersetzung folgt)
    ============================================================ */
 (function () {
@@ -659,6 +660,53 @@
     }, { passive: true });
   }
 
+  /* --- 7d · youtube ---------------------------------------- */
+  /* Lädt den YouTube-Player erst auf Klick. Vorher liegt nur das
+     Vorschaubild auf der Seite — schneller Seitenaufbau, und Besucher,
+     die nicht abspielen, bekommen keine Fremd-Cookies gesetzt. */
+  function initYoutube() {
+    var frames = document.querySelectorAll('[data-youtube]');
+    if (!frames.length) return;
+
+    Array.prototype.forEach.call(frames, function (frame) {
+      var id = frame.getAttribute('data-youtube');
+      var thumb = frame.querySelector('.videoframe__thumb');
+
+      /* Nicht jedes Video hat ein maxres-Vorschaubild — dann die
+         kleinere Fassung nehmen statt ein leeres Feld zu zeigen. */
+      if (thumb) {
+        thumb.addEventListener('error', function () {
+          if (thumb.dataset.fallback) return;
+          thumb.dataset.fallback = '1';
+          thumb.src = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
+        });
+      }
+
+      function laden() {
+        if (frame.dataset.loaded) return;
+        frame.dataset.loaded = '1';
+
+        var f = document.createElement('iframe');
+        /* nocookie-Variante: setzt erst beim Abspielen Cookies. */
+        f.src = 'https://www.youtube-nocookie.com/embed/' + id +
+                '?autoplay=1&rel=0&modestbranding=1';
+        f.title = 'Hotel Gabi Plovdiv — Video';
+        f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        f.allowFullscreen = true;
+        f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+
+        frame.innerHTML = '';
+        frame.appendChild(f);
+        frame.style.cursor = 'default';
+      }
+
+      frame.addEventListener('click', laden);
+      frame.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); laden(); }
+      });
+    });
+  }
+
   /* --- 8 · langSwitch -------------------------------------- */
   /* Deutsch steht im HTML; Englisch und Bulgarisch kommen aus i18n.js
      und werden über den deutschen Text nachgeschlagen.
@@ -748,6 +796,7 @@
     initBookingStub();
     initHeroMotion();
     initLightbox();
+    initYoutube();
     initLangSwitch();
   }
 

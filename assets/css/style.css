@@ -994,6 +994,61 @@ body.has-lightbox{ overflow:hidden; }
 .whystay__reason .rcard__no{ font-size:clamp(1.7rem,2.5vw,2.2rem); }
 .whystay__reason .rcard__title{ font-size:clamp(1.15rem,1.6vw,1.4rem); }
 
+/* Hotelvideo — Vorschaubild mit Abspielknopf. YouTube wird erst beim
+   Klick nachgeladen (siehe main.js), das hält die Seite schnell und
+   vermeidet Fremd-Cookies bei Besuchern, die gar nicht abspielen. */
+.videoblock{
+  margin-top:clamp(3.5rem,8vh,6rem);
+  padding-top:clamp(3rem,7vh,5rem);
+  border-top:1px solid var(--hair);
+}
+.videoframe{
+  position:relative;
+  aspect-ratio:16 / 9;
+  border-radius:26px;
+  overflow:hidden;
+  background:var(--ink);
+  cursor:pointer;
+}
+.videoframe__thumb{
+  width:100%; height:100%;
+  object-fit:cover;
+  transition:transform .7s var(--ease), opacity .5s var(--ease);
+}
+.videoframe:hover .videoframe__thumb{ transform:scale(1.03); opacity:.85; }
+
+.videoframe__play{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:clamp(64px,9vw,88px); height:clamp(64px,9vw,88px);
+  display:grid; place-items:center;
+  border:0; border-radius:50%;
+  background:var(--red); color:var(--white);
+  cursor:pointer;
+  transition:transform .45s var(--ease), background-color .45s var(--ease);
+}
+.videoframe__play svg{ width:36%; height:36%; margin-left:8%; }
+.videoframe:hover .videoframe__play{
+  transform:translate(-50%,-50%) scale(1.09);
+  background:var(--red-deep);
+}
+
+.videoframe__hint{
+  position:absolute; left:50%; bottom:clamp(.9rem,2.5vw,1.5rem);
+  transform:translateX(-50%);
+  white-space:nowrap;
+  font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.75);
+  text-shadow:0 1px 6px rgba(0,0,0,.6);
+}
+
+/* Nach dem Klick sitzt hier der YouTube-Rahmen. */
+.videoframe iframe{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  border:0;
+}
+
 /* Business-Meeting-Block — nutzt .split/.prose der Unterseiten wieder,
    nur mit vertauschter Spaltenreihenfolge (Bild links, Text rechts). */
 .whystay__business{

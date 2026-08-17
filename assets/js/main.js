@@ -702,11 +702,16 @@
         frame.dataset.loaded = '1';
 
         var f = document.createElement('iframe');
-        /* nocookie-Variante: setzt erst beim Abspielen Cookies. */
+        /* Läuft von selbst und stumm — Ton nur, wenn der Gast ihn
+           einschaltet. mute=1 ist Bedingung dafür, dass Browser das
+           Abspielen ohne Zutun überhaupt zulassen.
+           loop braucht bei einem Einzelvideo zusätzlich playlist.
+           nocookie-Variante hält die Datenspur klein. */
         f.src = 'https://www.youtube-nocookie.com/embed/' + id +
-                '?autoplay=1&rel=0&modestbranding=1';
+                '?autoplay=1&mute=1&loop=1&playlist=' + id +
+                '&playsinline=1&rel=0&modestbranding=1';
         f.title = 'Hotel Gabi Plovdiv — Video';
-        f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
         f.allowFullscreen = true;
         f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
 
@@ -715,6 +720,21 @@
         frame.style.cursor = 'default';
       }
 
+      /* Erst laden, wenn der Abschnitt tatsächlich zu sehen ist. So
+         startet das Video von selbst, ohne dass YouTube schon beim
+         Seitenaufruf kontaktiert wird. */
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          io.disconnect();
+          laden();
+        }, { threshold: 0.35 });
+        io.observe(frame);
+      } else {
+        laden();
+      }
+
+      /* Antippen lädt sofort, falls jemand nicht warten will. */
       frame.addEventListener('click', laden);
       frame.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); laden(); }

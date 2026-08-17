@@ -304,7 +304,7 @@ window.GABI_I18N = {
     "Video": "Video",
     "Sehen Sie": "See it",
     "selbst.": "for yourself.",
-    "Beim Abspielen wird YouTube geladen": "Playing will load YouTube",
+    "Läuft ohne Ton — für Ton antippen": "Playing without sound — tap for audio",
 
     /* Seitentitel */
     "About Us — Hotel Gabi": "About Us — Hotel Gabi",
@@ -598,7 +598,7 @@ window.GABI_I18N = {
     "Video": "Видео",
     "Sehen Sie": "Вижте",
     "selbst.": "сами.",
-    "Beim Abspielen wird YouTube geladen": "При пускане се зарежда YouTube",
+    "Läuft ohne Ton — für Ton antippen": "Възпроизвежда се без звук — докоснете за звук",
 
     "About Us — Hotel Gabi": "За нас — Хотел Габи",
     "Kontakt — Hotel Gabi": "Контакти — Хотел Габи",

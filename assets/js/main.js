@@ -11,6 +11,7 @@
      6. roomsRail      — vertikales Scrollen → horizontale Bewegung
      7. bookingStub    — Platzhalter-Verhalten, Logik folgt später
      7b. heroMotion    — Hero-Bewegung auf schmalen Screens
+     7c. lightbox      — Galeriebilder vergrößert anzeigen
      8. langSwitch     — Sprachwahl merken (Übersetzung folgt)
    ============================================================ */
 (function () {
@@ -543,9 +544,12 @@
 
       video.style.transform = 'scale(' + (1 + p * 0.12).toFixed(4) + ')';
 
-      var o = clamp(1 - p * 1.7, 0, 1);
+      /* Faktor bewusst nur knapp über 1: mit 1.7 war der Schriftzug schon
+         bei halbem Scrollweg verschwunden, das wirkte abrupt. So bleibt er
+         bis rund 80 % sichtbar und geht erst zum Ende hin. */
+      var o = clamp(1 - p * 1.25, 0, 1);
       grid.style.opacity = o.toFixed(3);
-      grid.style.transform = 'translateY(' + (p * -48).toFixed(1) + 'px)';
+      grid.style.transform = 'translateY(' + (p * -56).toFixed(1) + 'px)';
       if (foot) foot.style.opacity = o.toFixed(3);
 
       if (visible) requestAnimationFrame(frame);
@@ -572,6 +576,87 @@
       reset();
       if (visible) start();
     }, 160));
+  }
+
+  /* --- 7c · lightbox --------------------------------------- */
+  /* Die Galeriekacheln sind auf dem Handy klein. Antippen zeigt das Bild
+     gross; blättern per Pfeil, Tastatur oder Wischen. */
+  function initLightbox() {
+    var items = document.querySelectorAll('.gallery__item img');
+    if (!items.length) return;
+
+    var quellen = Array.prototype.map.call(items, function (i) { return i.getAttribute('src'); });
+    var index = 0;
+
+    var box = document.createElement('div');
+    box.className = 'lightbox';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'Bild vergrößert');
+    box.innerHTML =
+      '<img class="lightbox__img" alt="Hotel Gabi Plovdiv">' +
+      '<button class="lightbox__btn lightbox__close" type="button" aria-label="Schließen">' +
+        '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+      '<button class="lightbox__btn lightbox__prev" type="button" aria-label="Vorheriges Bild">' +
+        '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>' +
+      '<button class="lightbox__btn lightbox__next" type="button" aria-label="Nächstes Bild">' +
+        '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>' +
+      '<span class="lightbox__count"></span>';
+    document.body.appendChild(box);
+
+    var bild  = box.querySelector('.lightbox__img');
+    var zaehler = box.querySelector('.lightbox__count');
+
+    function zeigen(i) {
+      index = (i + quellen.length) % quellen.length;
+      bild.src = quellen[index];
+      zaehler.textContent = (index + 1) + ' / ' + quellen.length;
+    }
+
+    function oeffnen(i) {
+      zeigen(i);
+      box.classList.add('is-open');
+      document.body.classList.add('has-lightbox');
+      box.querySelector('.lightbox__close').focus();
+    }
+
+    function schliessen() {
+      box.classList.remove('is-open');
+      document.body.classList.remove('has-lightbox');
+    }
+
+    Array.prototype.forEach.call(items, function (img, i) {
+      img.parentNode.addEventListener('click', function () { oeffnen(i); });
+    });
+
+    box.querySelector('.lightbox__close').addEventListener('click', schliessen);
+    box.querySelector('.lightbox__prev').addEventListener('click', function (e) {
+      e.stopPropagation(); zeigen(index - 1);
+    });
+    box.querySelector('.lightbox__next').addEventListener('click', function (e) {
+      e.stopPropagation(); zeigen(index + 1);
+    });
+    /* Klick auf den Hintergrund schließt, Klick aufs Bild nicht. */
+    box.addEventListener('click', function (e) { if (e.target === box) schliessen(); });
+
+    document.addEventListener('keydown', function (e) {
+      if (!box.classList.contains('is-open')) return;
+      if (e.key === 'Escape') schliessen();
+      else if (e.key === 'ArrowLeft') zeigen(index - 1);
+      else if (e.key === 'ArrowRight') zeigen(index + 1);
+    });
+
+    /* Wischen auf dem Handy */
+    var startX = null;
+    box.addEventListener('touchstart', function (e) {
+      startX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    box.addEventListener('touchend', function (e) {
+      if (startX === null) return;
+      var dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 45) zeigen(index + (dx < 0 ? 1 : -1));
+      startX = null;
+    }, { passive: true });
   }
 
   /* --- 8 · langSwitch -------------------------------------- */
@@ -662,6 +747,7 @@
     initRoomsRail();
     initBookingStub();
     initHeroMotion();
+    initLightbox();
     initLangSwitch();
   }
 

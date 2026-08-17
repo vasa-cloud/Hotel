@@ -674,6 +674,49 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 }
 .gallery__item:hover img{ transform:scale(1.05); }
 .gallery:empty{ display:none; }
+.gallery__item{ cursor:zoom-in; }
+
+/* Vergrößerung — vor allem fürs Handy, wo die Kacheln klein sind.
+   Liegt über allem, schließt per Taste, Klick auf den Rand oder × . */
+.lightbox{
+  position:fixed; inset:0; z-index:200;
+  background:rgba(14,8,10,.94);
+  display:grid; place-items:center;
+  padding:clamp(1rem,4vw,3rem);
+  opacity:0; visibility:hidden;
+  transition:opacity .35s var(--ease), visibility .35s var(--ease);
+}
+.lightbox.is-open{ opacity:1; visibility:visible; }
+.lightbox__img{
+  max-width:100%; max-height:100%;
+  object-fit:contain;
+  border-radius:8px;
+}
+.lightbox__btn{
+  position:absolute;
+  width:46px; height:46px;
+  display:grid; place-items:center;
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:50%;
+  background:rgba(0,0,0,.35);
+  color:var(--white);
+  cursor:pointer;
+  transition:background-color .3s var(--ease), border-color .3s var(--ease);
+}
+.lightbox__btn:hover{ background:var(--red); border-color:var(--red); }
+.lightbox__btn svg{ width:18px; height:18px; }
+.lightbox__close{ top:clamp(.75rem,3vw,1.5rem); right:clamp(.75rem,3vw,1.5rem); }
+.lightbox__prev{ left:clamp(.5rem,2vw,1.5rem); top:50%; transform:translateY(-50%); }
+.lightbox__next{ right:clamp(.5rem,2vw,1.5rem); top:50%; transform:translateY(-50%); }
+.lightbox__count{
+  position:absolute; bottom:clamp(.75rem,3vw,1.5rem); left:50%;
+  transform:translateX(-50%);
+  font-size:.75rem; letter-spacing:.18em;
+  color:rgba(255,255,255,.7);
+  font-variant-numeric:tabular-nums;
+}
+/* Solange die Vergrößerung offen ist, soll die Seite dahinter still stehen. */
+body.has-lightbox{ overflow:hidden; }
 
 /* --- 5 · ABOUT ----------------------------------------------- */
 .about{ background:var(--white); padding:var(--sect-y) var(--gutter); }
@@ -1332,9 +1375,11 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
   .hero__grid{ gap:.75rem; }
   .hero__foot{ gap:1rem; }
 
-  /* Galerie: eine Spalte ergab knapp 5000 px Scrollweg. */
+  /* Galerie: eine Spalte ergab knapp 5000 px Scrollweg. Zwei Spalten
+     quadratisch — kompakt wie eine Fotoübersicht, Details holt man
+     sich durch Antippen. */
   .gallery{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:.6rem; }
-  .gallery__item{ border-radius:14px; }
+  .gallery__item{ border-radius:14px; aspect-ratio:1 / 1; }
 
   /* Footer wirklich einspaltig, Karte bekommt volle Breite. */
   .footer__grid{ grid-template-columns:1fr; gap:2rem; }

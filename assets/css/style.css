@@ -1404,9 +1404,14 @@ body.has-lightbox{ overflow:hidden; }
   /* Etwas mehr Luft zum Rand — 20 px wirkten gedrängt. */
   :root{ --gutter:1.5rem; --sect-y:clamp(3.5rem,9vh,5.5rem); }
 
-  /* Hero: der Schriftzug war mit 54 px zu klein für ein Vollbild. */
-  .hero__title .mask__i{ font-size:clamp(3.75rem,19vw,6rem); }
-  .hero__title .mask:first-child .mask__i{ font-size:clamp(1rem,4.6vw,1.6rem); }
+  /* Hero: mit 19vw nahm „Gabi" fast den halben Bildschirm ein und legte
+     sich über das Motiv, statt es freizugeben. Rund ein Drittel kleiner —
+     der Schriftzug bleibt die tragende Marke, das Bild atmet wieder. */
+  .hero__title .mask__i{ font-size:clamp(2.6rem,13vw,4.2rem); }
+  .hero__title .mask:first-child .mask__i{
+    font-size:clamp(.85rem,3.6vw,1.25rem);
+    letter-spacing:.2em;
+  }
   .hero__stage{ padding-top:clamp(4.5rem,11vh,6rem); }
   .hero__grid{ gap:.75rem; }
   .hero__foot{ gap:1rem; }

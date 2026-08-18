@@ -369,6 +369,7 @@
     var mRunning = false;
     var mP = 0;             // Fortschritt der Sequenz, 0…1
     var mSeekAt = 0;        // Zeitpunkt des letzten Notsprungs
+    var mPlayAt = 0;        // Zeitpunkt des letzten Abspielversuchs
     var retryBound = false;
 
     /* --- Sprungsteuerung ---
@@ -426,23 +427,46 @@
        Sprüngen. Braucht die Filmlänge nicht — die Höhe steht sofort. */
     function pinMobile() { return narrow.matches && !motionOff(); }
 
-    /* Abspielen kann am Energiesparmodus scheitern. Dann bleibt das erste
-       Bild stehen; beim ersten Antippen wird es noch einmal versucht. */
+    /* Abspielen scheitert auf dem Handy häufiger, als man denkt: im
+       Energiesparmodus verweigern iOS und Android es grundsätzlich, und
+       bei 6 Mbit/s ist oft schlicht noch zu wenig gepuffert. Dann bleibt
+       das erste Bild stehen — und die ganze Sequenz sieht aus wie ein
+       Foto, das nach oben rutscht.
+
+       Deshalb wird nicht nur einmal versucht. Die Wiederholung hängt an
+       der ersten Berührung, am ersten Scrollen und am Moment, in dem der
+       Puffer reicht. Sobald der Film läuft, hängen sich alle Zuhörer
+       wieder aus. */
     function playSoft() {
       var p = video.play();
-      if (!p || !p.catch) return;
-      p.catch(function () {
-        if (retryBound) return;
-        retryBound = true;
-        var retry = function () {
-          var q = video.play();
-          if (q && q.catch) q.catch(function () {});
-          document.removeEventListener('touchstart', retry);
-          document.removeEventListener('click', retry);
-        };
-        document.addEventListener('touchstart', retry, { passive: true });
-        document.addEventListener('click', retry);
-      });
+      if (p && p.catch) p.catch(function () {});
+      bindRetry();
+    }
+
+    function bindRetry() {
+      if (retryBound) return;
+      retryBound = true;
+
+      function unbind() {
+        retryBound = false;
+        document.removeEventListener('touchstart', retry);
+        document.removeEventListener('click', retry);
+        window.removeEventListener('scroll', retry);
+        video.removeEventListener('canplay', retry);
+      }
+
+      function retry() {
+        /* Bei reduzierter Bewegung steht der Film absichtlich still. */
+        if (motionOff()) { unbind(); return; }
+        if (!video.paused) { unbind(); return; }
+        var q = video.play();
+        if (q && q.catch) q.catch(function () {});
+      }
+
+      document.addEventListener('touchstart', retry, { passive: true });
+      document.addEventListener('click', retry);
+      window.addEventListener('scroll', retry, { passive: true });
+      video.addEventListener('canplay', retry);
     }
 
     function loopMode() {
@@ -463,6 +487,7 @@
     function scrubMode() {
       mobileOn = false;
       video.loop = false;
+      video.autoplay = false;
       video.playbackRate = 1;
       video.pause();
 
@@ -479,6 +504,9 @@
     function pinMobileMode() {
       video.loop = true;
       video.muted = true;
+      /* Erst als Eigenschaft gesetzt, nicht im HTML: sonst liefe der Film
+         auf dem Desktop kurz an, bevor der Scrub-Modus ihn anhält. */
+      video.autoplay = true;
       playSoft();
 
       /* Der Scrollweg hängt hier an der Bildschirmhöhe, nicht an der
@@ -534,6 +562,18 @@
 
       readMobile();
       render();
+
+      /* Steht der Film — abgelehnter Autoplay, leergelaufener Puffer,
+         Rückkehr aus dem Hintergrund —, wird er von hier aus wieder
+         angestoßen. Gedrosselt, damit kein Dauerfeuer entsteht. */
+      if (video.paused && !motionOff()) {
+        var jetzt = Date.now();
+        if (jetzt - mPlayAt > 1500) {
+          mPlayAt = jetzt;
+          var pr = video.play();
+          if (pr && pr.catch) pr.catch(function () {});
+        }
+      }
 
       if (duration > 0 && !video.paused) {
         /* Nur ein Ausschnitt des Films wird auf den Scrollweg gelegt:
@@ -879,14 +919,30 @@
       if (travel <= 0) travel = 1;
       var p = clamp(-section.getBoundingClientRect().top / travel, 0, 1);
 
-      video.style.transform = 'scale(' + (1 + p * 0.12).toFixed(4) + ')';
+      /* Auf dem Handy trägt allein diese Bewegung die Sequenz — der Film
+         wird dort nicht gescrubbt, sondern läuft. Mit 12 % Zoom über zwei
+         Bildschirme Scrollweg sah das aus wie ein Standbild, das nach oben
+         rutscht. Deshalb hier deutlich kräftiger: mehr Zoom plus ein
+         langsamer Versatz nach oben, der das Bild gegen die Bewegung des
+         Schriftzugs laufen lässt. Beides liegt in der GPU. */
+      var stark = section.classList.contains('is-pinned') && narrow.matches;
+      var zoom  = stark ? 0.26 : 0.12;   // Endmaßstab des Bildes
+      var drift = stark ? -7   : 0;      // Prozent der Bildhöhe
+      var hub   = stark ? -120 : -56;    // px, um die der Schriftzug steigt
+
+      /* Der Versatz muss innerhalb des Zooms bleiben, sonst käme unter dem
+         Bild der Sektionsgrund durch: 26 % Zoom geben 13 % Rand auf jeder
+         Seite, davon werden höchstens 9 % gebraucht. */
+      video.style.transform =
+        'scale(' + (1 + p * zoom).toFixed(4) + ')' +
+        (drift ? ' translate3d(0,' + (p * drift).toFixed(2) + '%,0)' : '');
 
       /* Faktor bewusst nur knapp über 1: mit 1.7 war der Schriftzug schon
          bei halbem Scrollweg verschwunden, das wirkte abrupt. So bleibt er
          bis rund 80 % sichtbar und geht erst zum Ende hin. */
       var o = clamp(1 - p * 1.25, 0, 1);
       grid.style.opacity = o.toFixed(3);
-      grid.style.transform = 'translateY(' + (p * -56).toFixed(1) + 'px)';
+      grid.style.transform = 'translateY(' + (p * hub).toFixed(1) + 'px)';
       if (foot) foot.style.opacity = o.toFixed(3);
 
       if (visible) requestAnimationFrame(frame);

@@ -143,7 +143,8 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 .brand__logo{
   height:clamp(30px, 3.6vw, 48px);
   width:auto;
-  transition:height .5s var(--ease), filter .5s var(--ease);
+  transition:height .5s var(--ease), filter .5s var(--ease),
+             opacity .4s var(--ease);
 }
 .header.is-stuck .brand__logo{ height:clamp(26px, 2.9vw, 38px); }
 /* Nur auf der Startseite liegt der Header über dem Video und braucht
@@ -241,6 +242,10 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 }
 
 .hero__title{ margin:0; }
+/* Das 3D-Logo ersetzt den gesetzten Schriftzug auf dem Handy — dort ist
+   es die einzige Stelle, an der „HOTEL" und die drei Sterne lesbar sind.
+   Ab Tablet tritt es wieder ab, siehe Handy-Block am Dateiende. */
+.hero__logo{ display:none; }
 .hero__title .mask{ display:block; overflow:hidden; padding-bottom:.04em; }
 /* Über dem Film trägt Weiß — Rot bleibt den Akzenten vorbehalten. */
 .hero__title .mask__i{
@@ -1404,14 +1409,22 @@ body.has-lightbox{ overflow:hidden; }
   /* Etwas mehr Luft zum Rand — 20 px wirkten gedrängt. */
   :root{ --gutter:1.5rem; --sect-y:clamp(3.5rem,9vh,5.5rem); }
 
-  /* Hero: mit 19vw nahm „Gabi" fast den halben Bildschirm ein und legte
-     sich über das Motiv, statt es freizugeben. Rund ein Drittel kleiner —
-     der Schriftzug bleibt die tragende Marke, das Bild atmet wieder. */
-  .hero__title .mask__i{ font-size:clamp(2.6rem,13vw,4.2rem); }
-  .hero__title .mask:first-child .mask__i{
-    font-size:clamp(.85rem,3.6vw,1.25rem);
-    letter-spacing:.2em;
+  /* Hero: statt des gesetzten Schriftzugs steht hier das 3D-Logo. Es
+     ist die einzige Fassung, in der „HOTEL" und die drei Sterne lesbar
+     sind — im Kopfzeilen-Logo waren sie bei 30 px Höhe nur noch 8 bzw.
+     6 px groß. Bei 82vw wird das Wort rund 30 px hoch. */
+  .hero__title .mask{ display:none; }
+  .hero__logo{
+    display:block;
+    width:min(82vw,440px);
+    height:auto;
+    filter:drop-shadow(0 8px 28px rgba(0,0,0,.5));
   }
+
+  /* Daneben wäre das kleine Logo in der Kopfzeile dieselbe Grafik ein
+     zweites Mal. Es kommt zurück, sobald der Header beim Scrollen seinen
+     weißen Grund bekommt. */
+  .header--overlay:not(.is-stuck) .brand__logo{ opacity:0; }
   .hero__stage{ padding-top:clamp(4.5rem,11vh,6rem); }
   .hero__grid{ gap:.75rem; }
   .hero__foot{ gap:1rem; }
@@ -1441,12 +1454,16 @@ body.has-lightbox{ overflow:hidden; }
 }
 
 /* ------------------------------------------------------------------
-   HANDY — angeheftete Sequenzen (Hero-Film, Zimmer-Reihe)
+   HANDY — angeheftete Zimmer-Reihe
 
    Greift ausschließlich, wenn JS die Sektion mit .is-pinned übernommen
    hat. Ohne JS, bei reduzierter Bewegung oder wenn die Messung scheitert,
    bleibt es beim nativen Verhalten der Blöcke darüber — die Seite
    funktioniert also in jedem Fall.
+
+   Der Hero wird auf dem Handy bewusst NICHT angeheftet: dort steht das
+   3D-Logo, und eine Sequenz, die den Scroll anhält, würde genau davor
+   stehen. Siehe initFilmScrub in main.js.
    ------------------------------------------------------------------ */
 @media (max-width:859px){
 
@@ -1454,19 +1471,16 @@ body.has-lightbox{ overflow:hidden; }
      eingeblendeter Adressleiste; blendet sie sich beim Scrollen aus,
      bliebe unten ein weißer Streifen stehen. dvh folgt der Leiste. */
   @supports (height:100dvh){
-    .hero.is-pinned .hero__stage,
     .rooms.is-pinned .rooms__viewport{ height:100dvh; }
   }
 
-  /* Während die Sequenz läuft, darf der Browser die Geste nicht selbst
-     als horizontales Wischen deuten — sonst kämpfen Finger und Animation
-     um dieselbe Bewegung. Vertikal bleibt alles erlaubt. */
-  .hero.is-pinned .hero__stage,
+  /* Während die Reihe läuft, darf der Browser die Geste nicht selbst als
+     horizontales Wischen deuten — sonst kämpfen Finger und Animation um
+     dieselbe Bewegung. Vertikal bleibt alles erlaubt. */
   .rooms.is-pinned .rooms__viewport{ touch-action:pan-y; }
 
-  /* Der Laufbalken zeigt, wie weit die Sequenz ist. Ohne ihn fühlt sich
-     die gebremste Seite wie hängengeblieben an statt wie geführt. */
-  .hero.is-pinned .film__progress{ display:block; }
+  /* Der Laufbalken zeigt, wie weit die Reihe ist. Ohne ihn fühlt sich die
+     gebremste Seite wie hängengeblieben an statt wie geführt. */
   .rooms.is-pinned .rooms__progress{ display:block; }
 
   /* Angeheftet trägt die Sektion nur noch den Scrollweg — der Abstand

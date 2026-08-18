@@ -319,18 +319,14 @@
      bestimmt die Zeitmarke. Die Hero-Bühne bleibt so lange stehen, bis der
      Film durchgelaufen ist — danach gibt sie die Seite wieder frei.
 
-     Auf schmalen Screens ist Scrubbing unzuverlässig: mobile Browser
-     rendern Frames beim Seeken oft nicht, und bei 6 Mbit/s wird jeder
-     Sprung zur Ruckelquelle. Die Bühne wird dort trotzdem angeheftet und
-     am Scroll geführt — nur der Film wird nicht gesprungen, sondern
-     ECHT abgespielt. Gekoppelt wird über die Abspielgeschwindigkeit:
-     sie steuert den Film sanft auf die Zeitmarke zu, die zur
-     Scrollposition gehört. Damit hängt das Bild am Scroll, ohne je
-     einzufrieren — Smoothness geht hier vor Bildgenauigkeit.
+     Auf dem Handy wird NICHT angeheftet. Scrubbing ist dort unzuverlässig
+     (mobile Browser rendern Frames beim Seeken oft nicht), und eine
+     Sequenz, die den Scroll anhält, verdeckt genau das, was oben zählt:
+     das 3D-Logo mit „HOTEL" und den Sternen. Der Film läuft dort schlicht
+     stumm in Schleife, gescrollt wird frei.
 
-     Ohne JS, bei reduzierter Bewegung oder wenn die Filmlänge nicht
-     ermittelbar ist, bleibt es beim alten Verhalten: Schleife, kein
-     Anheften.                                                          */
+     Dasselbe gilt bei reduzierter Bewegung und wenn die Filmlänge nicht
+     ermittelbar ist.                                                    */
   function initFilmScrub() {
     var section = document.querySelector('[data-film]');
     if (!section) return;
@@ -344,18 +340,6 @@
        waren es mit 320 fast drei, was sich zäh anfühlte. */
     var PX_PER_SECOND = 120;
 
-    /* Handy: 300 px Scrollweg entsprechen einer Sekunde Film. Wer in
-       ruhigem Tempo scrollt (rund 300 px/s), sieht den Film dadurch in
-       normaler Geschwindigkeit — schneller gewischt zieht er an, langsamer
-       läuft er aus. Der Wert bestimmt nur die Kopplung, nicht den
-       Scrollweg: der steht in MOBILE_SCREENS. */
-    var PX_PER_SECOND_MOBILE = 300;
-    /* Scrollweg der angehefteten Bühne, in Bildschirmhöhen. 1.5 heißt:
-       eine volle Daumenbewegung schafft gut die Hälfte — die Sequenz kann
-       also nicht mit einem Wisch übersprungen werden, bleibt aber kurz
-       genug, um nicht zäh zu wirken. */
-    var MOBILE_SCREENS = 1.5;
-
     var duration = 0;
     var distance = 0;
     var currentT = 0;    // gerenderte Zeitmarke
@@ -363,13 +347,6 @@
     var running = false;
     var visible = false;
     var lastTs = 0;
-
-    /* Handy-Zweig */
-    var mobileOn = false;   // Bühne angeheftet, Film läuft gekoppelt
-    var mRunning = false;
-    var mP = 0;             // Fortschritt der Sequenz, 0…1
-    var mSeekAt = 0;        // Zeitpunkt des letzten Notsprungs
-    var mPlayAt = 0;        // Zeitpunkt des letzten Abspielversuchs
     var retryBound = false;
 
     /* --- Sprungsteuerung ---
@@ -423,15 +400,10 @@
 
     function active() { return desktop.matches && !motionOff() && duration > 0; }
 
-    /* Handy-Fassung: gleiche angeheftete Bühne, aber laufender Film statt
-       Sprüngen. Braucht die Filmlänge nicht — die Höhe steht sofort. */
-    function pinMobile() { return narrow.matches && !motionOff(); }
-
     /* Abspielen scheitert auf dem Handy häufiger, als man denkt: im
        Energiesparmodus verweigern iOS und Android es grundsätzlich, und
        bei 6 Mbit/s ist oft schlicht noch zu wenig gepuffert. Dann bleibt
-       das erste Bild stehen — und die ganze Sequenz sieht aus wie ein
-       Foto, das nach oben rutscht.
+       ein Standbild stehen, wo ein Film laufen sollte.
 
        Deshalb wird nicht nur einmal versucht. Die Wiederholung hängt an
        der ersten Berührung, am ersten Scrollen und am Moment, in dem der
@@ -470,8 +442,7 @@
     }
 
     function loopMode() {
-      /* Ohne Anheften: kein Scrubbing, kein Scrollbezug. */
-      mobileOn = false;
+      /* Handy und reduzierte Bewegung: kein Anheften, kein Scrollbezug. */
       section.classList.remove('is-pinned');
       section.style.height = '';
       if (progress) progress.style.width = '';
@@ -481,11 +452,13 @@
       video.loop = true;
       video.muted = true;
       video.playbackRate = 1;
+      /* Erst als Eigenschaft gesetzt, nicht im HTML: im Scrub-Modus des
+         Desktops liefe der Film sonst kurz an, bevor JS ihn anhält. */
+      video.autoplay = true;
       playSoft();
     }
 
     function scrubMode() {
-      mobileOn = false;
       video.loop = false;
       video.autoplay = false;
       video.playbackRate = 1;
@@ -501,32 +474,12 @@
       render();
     }
 
-    function pinMobileMode() {
-      video.loop = true;
-      video.muted = true;
-      /* Erst als Eigenschaft gesetzt, nicht im HTML: sonst liefe der Film
-         auf dem Desktop kurz an, bevor der Scrub-Modus ihn anhält. */
-      video.autoplay = true;
-      playSoft();
-
-      /* Der Scrollweg hängt hier an der Bildschirmhöhe, nicht an der
-         Filmlänge: gefragt ist ein verlässliches Gefühl auf jedem Gerät,
-         keine bildgenaue Abbildung des Films. */
-      distance = Math.round(clamp(window.innerHeight * MOBILE_SCREENS, 800, 1700));
-      section.classList.add('is-pinned');
-      section.style.height = (window.innerHeight + distance) + 'px';
-
-      mobileOn = true;
-      readMobile();
-      render();
-      if (visible) mStart();
-    }
-
     function measure() {
-      if (duration > 0 && active()) { scrubMode(); return; }
-      if (pinMobile()) { pinMobileMode(); return; }
       if (!duration) return;
-      loopMode();
+
+      if (!active()) { loopMode(); return; }
+
+      scrubMode();
     }
 
     function readTarget() {
@@ -536,90 +489,13 @@
       targetT = p * duration;
     }
 
-    function readMobile() {
-      var travel = section.offsetHeight - window.innerHeight;
-      mP = travel > 0 ? clamp(-section.getBoundingClientRect().top / travel, 0, 1) : 0;
-    }
-
     /* Der Laufbalken hängt an der Scrollposition, nicht am Decoder —
        sonst friert er mit ein, sobald ein Sprung länger dauert. */
     function render() {
-      if (!progress) return;
-      if (mobileOn) {
-        progress.style.width = (mP * 100).toFixed(2) + '%';
-      } else if (duration > 0) {
+      if (progress && duration > 0) {
         progress.style.width = ((clamp(currentT, 0, duration) / duration) * 100).toFixed(2) + '%';
       }
     }
-
-    /* --- Handy: Film an den Scroll koppeln -------------------
-       Statt zu springen wird die Abspielgeschwindigkeit nachgeregelt.
-       Liegt der Film hinter der Scrollposition, zieht er an; liegt er
-       davor, läuft er langsamer weiter — er steht aber nie still. */
-    function mFrame() {
-      if (!mRunning) return;
-      if (!mobileOn) { mRunning = false; return; }
-
-      readMobile();
-      render();
-
-      /* Steht der Film — abgelehnter Autoplay, leergelaufener Puffer,
-         Rückkehr aus dem Hintergrund —, wird er von hier aus wieder
-         angestoßen. Gedrosselt, damit kein Dauerfeuer entsteht. */
-      if (video.paused && !motionOff()) {
-        var jetzt = Date.now();
-        if (jetzt - mPlayAt > 1500) {
-          mPlayAt = jetzt;
-          var pr = video.play();
-          if (pr && pr.catch) pr.catch(function () {});
-        }
-      }
-
-      if (duration > 0 && !video.paused) {
-        /* Nur ein Ausschnitt des Films wird auf den Scrollweg gelegt:
-           Über die volle Länge müsste er bei normalem Scrolltempo
-           vierfach laufen, was wie Vorspulen aussieht. */
-        var span = Math.min(duration, distance / PX_PER_SECOND_MOBILE);
-        var d = mP * span - video.currentTime;
-
-        /* Der Film läuft in Schleife — die kürzere Richtung im Kreis
-           nehmen, sonst gilt der Rücksprung auf 0 als riesiger Abstand. */
-        while (d >  duration / 2) d -= duration;
-        while (d < -duration / 2) d += duration;
-
-        /* Ein einziger Sprung, wenn der Abstand nicht mehr einzuholen ist
-           (z. B. nach langem Stillstand oder Zurückscrollen). Selten und
-           gedrosselt — genau das verträgt ein mobiler Decoder noch. */
-        var now = Date.now();
-        if (Math.abs(d) > 2.6 && now - mSeekAt > 700) {
-          mSeekAt = now;
-          try { video.currentTime = clamp(mP * span, 0, duration - 0.05); } catch (err) {}
-        } else {
-          var rate = clamp(1 + d * 0.6, 0.5, 3);
-          if (Math.abs(video.playbackRate - rate) > 0.04) {
-            try { video.playbackRate = rate; } catch (err) {}
-          }
-        }
-      }
-
-      if (visible) requestAnimationFrame(mFrame);
-      else mRunning = false;
-    }
-
-    function mStart() {
-      if (mRunning || !mobileOn) return;
-      mRunning = true;
-      requestAnimationFrame(mFrame);
-    }
-
-    /* Solange die Bühne angeheftet ist, führt der Guard den Nachlauf des
-       Touch-Scrolls durch genau diesen Bereich. Auf dem Desktop liefert
-       die Funktion null — dort bleibt der Guard untätig. */
-    scrollGuard.add(function () {
-      if (!mobileOn) return null;
-      var top = section.getBoundingClientRect().top + window.scrollY;
-      return { from: top, to: top + section.offsetHeight - window.innerHeight };
-    });
 
     function frame(ts) {
       if (!running) return;
@@ -655,13 +531,8 @@
       duration = video.duration;
       if (!isFinite(duration) || duration <= 0) { duration = 0; return; }
       measure();
-      if (visible) { start(); mStart(); }
+      if (visible) start();
     }
-
-    /* Auf dem Handy hängt die Sektionshöhe nicht an der Filmlänge. Sie darf
-       deshalb sofort stehen — sonst würde die halbe Seite darunter beim
-       Eintreffen der Metadaten nachrutschen. */
-    if (pinMobile()) measure();
 
     if (video.readyState >= 1) onMeta();
     else video.addEventListener('loadedmetadata', onMeta, { once: true });
@@ -669,12 +540,11 @@
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         visible = entries[0].isIntersecting;
-        if (visible) { start(); mStart(); }
+        if (visible) start();
       }, { rootMargin: '20% 0px 20% 0px' }).observe(section);
     } else {
       visible = true;
       start();
-      mStart();
     }
 
     window.addEventListener('resize', debounce(onViewportChange(measure), 160));
@@ -889,14 +759,10 @@
     var running = false;
     var visible = false;
 
-    /* Auf dem Desktop trägt der gescrubbte Film die Bewegung allein —
-       dort bleibt dieses Modul stumm, sobald die Bühne angeheftet ist.
-       Auf dem Handy ist es umgekehrt: der Film läuft dort nur, die
-       sichtbare Bewegung (Zoom, Ausblenden) kommt von hier. */
+    /* Greift nur, solange die Bühne NICHT angeheftet ist — auf dem
+       Desktop übernimmt der Film selbst die Bewegung. */
     function active() {
-      if (motionOff()) return false;
-      if (section.classList.contains('is-pinned')) return narrow.matches;
-      return true;
+      return !section.classList.contains('is-pinned') && !motionOff();
     }
 
     function reset() {
@@ -911,38 +777,17 @@
 
       if (!active()) { reset(); running = false; return; }
 
-      /* Angeheftet zählt nur der Weg, den die Bühne wirklich stehenbleibt.
-         Mit der vollen Sektionshöhe käme die Bewegung nie über 60 %. */
-      var travel = section.classList.contains('is-pinned')
-        ? (section.offsetHeight - window.innerHeight)
-        : section.offsetHeight;
-      if (travel <= 0) travel = 1;
+      var travel = section.offsetHeight || 1;
       var p = clamp(-section.getBoundingClientRect().top / travel, 0, 1);
 
-      /* Auf dem Handy trägt allein diese Bewegung die Sequenz — der Film
-         wird dort nicht gescrubbt, sondern läuft. Mit 12 % Zoom über zwei
-         Bildschirme Scrollweg sah das aus wie ein Standbild, das nach oben
-         rutscht. Deshalb hier deutlich kräftiger: mehr Zoom plus ein
-         langsamer Versatz nach oben, der das Bild gegen die Bewegung des
-         Schriftzugs laufen lässt. Beides liegt in der GPU. */
-      var stark = section.classList.contains('is-pinned') && narrow.matches;
-      var zoom  = stark ? 0.26 : 0.12;   // Endmaßstab des Bildes
-      var drift = stark ? -7   : 0;      // Prozent der Bildhöhe
-      var hub   = stark ? -120 : -56;    // px, um die der Schriftzug steigt
-
-      /* Der Versatz muss innerhalb des Zooms bleiben, sonst käme unter dem
-         Bild der Sektionsgrund durch: 26 % Zoom geben 13 % Rand auf jeder
-         Seite, davon werden höchstens 9 % gebraucht. */
-      video.style.transform =
-        'scale(' + (1 + p * zoom).toFixed(4) + ')' +
-        (drift ? ' translate3d(0,' + (p * drift).toFixed(2) + '%,0)' : '');
+      video.style.transform = 'scale(' + (1 + p * 0.12).toFixed(4) + ')';
 
       /* Faktor bewusst nur knapp über 1: mit 1.7 war der Schriftzug schon
          bei halbem Scrollweg verschwunden, das wirkte abrupt. So bleibt er
          bis rund 80 % sichtbar und geht erst zum Ende hin. */
       var o = clamp(1 - p * 1.25, 0, 1);
       grid.style.opacity = o.toFixed(3);
-      grid.style.transform = 'translateY(' + (p * hub).toFixed(1) + 'px)';
+      grid.style.transform = 'translateY(' + (p * -56).toFixed(1) + 'px)';
       if (foot) foot.style.opacity = o.toFixed(3);
 
       if (visible) requestAnimationFrame(frame);

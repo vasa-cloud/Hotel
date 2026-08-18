@@ -89,6 +89,13 @@
 
       <div class="hero__grid">
         <h1 class="hero__title">
+          <!-- Auf dem Handy trägt das 3D-Logo die Marke: dort sind „HOTEL"
+               und die drei Sterne bei 30 px Kopfzeilen-Logo nicht mehr zu
+               erkennen. Ab 860 px übernimmt wieder der gesetzte Schriftzug
+               darunter, das Logo tritt ab. Genau eines von beiden ist
+               sichtbar — siehe .hero__logo im Stylesheet. -->
+          <img class="hero__logo" src="assets/img/brand/gabi-logo.png"
+               alt="Hotel Gabi" width="640" height="228" data-reveal>
           <span class="mask"><span class="mask__i" data-reveal data-reveal-delay="0">Hotel</span></span>
           <span class="mask"><span class="mask__i" data-reveal data-reveal-delay="1">Gabi</span></span>
         </h1>

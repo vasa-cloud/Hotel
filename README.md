@@ -44,19 +44,26 @@ gesetzt, nicht über eine CSS-Variable. Ein `url()` in einer CSS-Variablen
 löst der Browser relativ zur **Stylesheet-Datei** auf, was auf dem Server
 zu 404 führte.
 
-**Scroll-Sequenzen (Hero-Film und Zimmer-Reihe):** Beide Sektionen werden
-per JS angeheftet — die Sektion bekommt eine Höhe, die Bühne darin steht
-per `position:sticky` still, und die Scrollposition steuert die Animation.
-Erkennbar an der Klasse `is-pinned`, die JS setzt. Alle CSS-Regeln für den
-nicht angehefteten Fall stehen deshalb unter `:not(.is-pinned)` — wer dort
-ein `!important` einbaut, hebelt die Inline-Höhe von JS aus und die
-Sequenz steht still.
+**Scroll-Sequenzen:** Eine Sektion wird per JS angeheftet — sie bekommt eine
+Höhe, die Bühne darin steht per `position:sticky` still, und die
+Scrollposition steuert die Animation. Erkennbar an der Klasse `is-pinned`,
+die JS setzt. Alle CSS-Regeln für den nicht angehefteten Fall stehen deshalb
+unter `:not(.is-pinned)` — wer dort ein `!important` einbaut, hebelt die
+Inline-Höhe von JS aus und die Sequenz steht still.
 
-Desktop und Handy unterscheiden sich in einem Punkt: Der Desktop **scrubbt**
-den Film (Scrollposition = Zeitmarke). Auf dem Handy geht das nicht, weil
-mobile Browser beim Seeken oft keine Frames rendern. Dort **läuft** der Film
-und wird über die Abspielgeschwindigkeit an die Scrollposition
-herangeregelt — sichtbar gekoppelt, aber nie eingefroren.
+Was wo angeheftet wird:
+
+| | Desktop | Handy |
+|---|---|---|
+| Hero-Film | angeheftet, Video wird **gescrubbt** (Scrollposition = Zeitmarke) | **nicht** angeheftet, Video läuft stumm in Schleife |
+| Zimmer-Reihe | angeheftet, Faktor 0.55 | angeheftet, Faktor 0.85 |
+
+Der Hero bleibt auf dem Handy bewusst frei scrollbar: dort steht das
+3D-Logo (`.hero__logo`) anstelle des gesetzten Schriftzugs, weil „HOTEL"
+und die drei Sterne im Kopfzeilen-Logo bei 30 px Höhe nur noch 8 bzw. 6 px
+groß sind. Eine Sequenz, die den Scroll anhält, stünde genau davor. Solange
+der Hero sichtbar ist, blendet sich deshalb auch das kleine Logo in der
+Kopfzeile aus — sonst stünde dieselbe Grafik zweimal im Bild.
 
 **scrollGuard (nur Touch):** Ein Wisch trägt die Seite nach dem Loslassen
 weit weiter; eine Sequenz wäre nach einer Geste vorbei. Der Guard übernimmt

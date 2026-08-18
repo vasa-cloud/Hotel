@@ -452,8 +452,9 @@ svg path{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round
 }
 
 /* --- 4c · GEMEINSAME BAUSTEINE -------------------------------- */
-/* Runde Karte — dieselbe Form wie bei den fünf Gründen, hier als
-   eigene Klasse, damit Unterseiten sie mitbenutzen können. */
+/* Runde Karte — eigene Klasse, damit alle Unterseiten sie mitbenutzen
+   können. Auf der Startseite trug sie einmal die fünf Gründe; die sind
+   entfernt, die Karte lebt in about, buchen und kontakt weiter. */
 .rcard{
   background:var(--white);
   border:1px solid var(--hair);
@@ -971,29 +972,12 @@ body.has-lightbox{ overflow:hidden; }
 }
 .reviews__card-name{ font-size:.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-30); }
 
-/* --- 8 · WHY STAY WITH US -------------------------------------- */
+/* --- 8 · VIDEO UND KONFERENZSAAL ------------------------------- */
+/* Klassenname .whystay stammt aus der Zeit, als hier die fünf Gründe
+   standen. Er trägt jetzt nur noch Grundfläche und Abstand des
+   Abschnitts — Video und Business-Block sitzen darin. */
 .whystay{ background:var(--paper); padding:var(--sect-y) var(--gutter); }
 .whystay__inner{ max-width:1180px; margin-inline:auto; }
-.whystay__head{ max-width:620px; margin-bottom:clamp(2.5rem,6vh,4rem); display:flex; flex-direction:column; gap:1rem; }
-
-/* Fünf runde Karten statt eines Rasters mit Trennlinien.
-   Sechserraster als Grundlage: drei Karten oben (je 2 Spalten), zwei
-   darunter mittig (Start bei Spalte 2 und 4). */
-.whystay__reasons{
-  display:grid; grid-template-columns:repeat(6,1fr);
-  gap:clamp(1.1rem,2vw,1.75rem);
-}
-/* Form und Hover kommen aus .rcard — hier nur Rasterlage und Größe. */
-.whystay__reason{
-  grid-column:span 2;
-  padding:clamp(1.75rem,2.6vw,2.4rem);
-  gap:.6rem;
-}
-.whystay__reason:nth-child(4){ grid-column:2 / span 2; }
-.whystay__reason:nth-child(5){ grid-column:4 / span 2; }
-.whystay__reason .rcard__no{ font-size:clamp(1.7rem,2.5vw,2.2rem); }
-.whystay__reason .rcard__title{ font-size:clamp(1.15rem,1.6vw,1.4rem); }
-
 /* Hotelvideo — Vorschaubild mit Abspielknopf. YouTube wird erst beim
    Klick nachgeladen (siehe main.js), das hält die Seite schnell und
    vermeidet Fremd-Cookies bei Besuchern, die gar nicht abspielen. */
@@ -1001,6 +985,13 @@ body.has-lightbox{ overflow:hidden; }
   margin-top:clamp(3.5rem,8vh,6rem);
   padding-top:clamp(3rem,7vh,5rem);
   border-top:1px solid var(--hair);
+}
+/* Steht der Block ganz oben im Abschnitt, gibt es über der Trennlinie
+   nichts zu trennen — dann fällt sie samt Abstand weg. */
+.videoblock:first-child{
+  margin-top:0;
+  padding-top:0;
+  border-top:0;
 }
 .videoframe{
   position:relative;
@@ -1320,16 +1311,7 @@ body.has-lightbox{ overflow:hidden; }
   .ctaband__inner{ flex-direction:column; align-items:flex-start; }
 }
 
-/* Zwischenstufe: Gründe zweispaltig, letzte Karte über die volle Breite */
-@media (max-width:1000px){
-  .whystay__reasons{ grid-template-columns:repeat(2,1fr); }
-  .whystay__reason,
-  .whystay__reason:nth-child(4),
-  .whystay__reason:nth-child(5){ grid-column:auto; }
-  .whystay__reason:nth-child(5){ grid-column:1 / -1; }
-}
-
-/* Reviews und Gründe einspaltig */
+/* Reviews einspaltig, Galerie zweispaltig */
 @media (max-width:900px){
   .reviews__row{ grid-template-columns:1fr; }
   .gallery{ grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -1359,30 +1341,29 @@ body.has-lightbox{ overflow:hidden; }
   .room--link:hover .room__frame{ transform:none; box-shadow:none; }
   .room__frame{ overflow:visible; }
 }
-@media (max-width:700px){
-  .whystay__reasons{ grid-template-columns:1fr; }
-  .whystay__reason:nth-child(5){ grid-column:auto; }
-}
 
-/* Mobil — die Sequenz bleibt horizontal, nur nativ gescrollt.
-   Damit kann die Animation auf kleinen Screens nicht "kaputtgehen". */
+/* Mobil ohne Anheften — Rückfallebene. Sie gilt, solange JS die Sektion
+   nicht übernommen hat (kein JS, reduzierte Bewegung, Messung gescheitert).
+   Die Sequenz bleibt dann horizontal, nur nativ gescrollt.
+   Den angehefteten Fall regelt der Block weiter unten. */
 @media (max-width:859px){
-  /* Kein Anheften: das Video läuft hier von selbst in Schleife.
+  /* Ohne Anheften läuft das Video von selbst in Schleife.
      Ohne Höhenzwang darf es die volle Breite nehmen. */
-  .hero{ height:auto !important; }
-  .hero__stage{ position:static; height:auto; min-height:100svh; }
-  .film__progress{ display:none; }
+  .hero:not(.is-pinned){ height:auto; }
+  .hero:not(.is-pinned) .hero__stage{ position:static; height:auto; min-height:100svh; }
+  .hero:not(.is-pinned) .film__progress{ display:none; }
 
-  .rooms{ height:auto !important; padding-block:var(--sect-y); }
-  .rooms__viewport{
+  .rooms:not(.is-pinned){ height:auto; padding-block:var(--sect-y); }
+  .rooms:not(.is-pinned) .rooms__viewport{
     position:static; height:auto;
     overflow-x:auto; overflow-y:hidden;
     scroll-snap-type:x mandatory;
     -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
   }
-  .rooms__viewport::-webkit-scrollbar{ display:none; }
-  .rooms__track{ transform:none !important; gap:1.5rem; padding-block:1rem; }
+  .rooms:not(.is-pinned) .rooms__viewport::-webkit-scrollbar{ display:none; }
+  .rooms__track{ gap:1.5rem; padding-block:1rem; }
+  .rooms:not(.is-pinned) .rooms__track{ transform:none; }
   .rooms__track > *{ scroll-snap-align:center; }
   .rooms__intro{ width:min(80vw,340px); scroll-snap-align:start; }
   .rooms__outro{ width:min(70vw,300px); }
@@ -1390,7 +1371,7 @@ body.has-lightbox{ overflow:hidden; }
   .room--lift{ transform:none; }
   [data-room].room--lift.is-in{ transform:none; }
   .rooms__thread{ display:none; }
-  .rooms__progress{ display:none; }
+  .rooms:not(.is-pinned) .rooms__progress{ display:none; }
 
   /* Mehrzeilig gestapelt — eine volle Pillenform sähe hier schief aus. */
   .bookbar{ grid-template-columns:repeat(2,minmax(0,1fr)); border-radius:28px; }
@@ -1452,6 +1433,45 @@ body.has-lightbox{ overflow:hidden; }
 
   /* Zahlenband nebeneinander statt untereinander. */
   .statband{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.5rem; }
+}
+
+/* ------------------------------------------------------------------
+   HANDY — angeheftete Sequenzen (Hero-Film, Zimmer-Reihe)
+
+   Greift ausschließlich, wenn JS die Sektion mit .is-pinned übernommen
+   hat. Ohne JS, bei reduzierter Bewegung oder wenn die Messung scheitert,
+   bleibt es beim nativen Verhalten der Blöcke darüber — die Seite
+   funktioniert also in jedem Fall.
+   ------------------------------------------------------------------ */
+@media (max-width:859px){
+
+  /* Die Bühne muss den WIRKLICHEN Sichtbereich füllen. svh rechnet mit
+     eingeblendeter Adressleiste; blendet sie sich beim Scrollen aus,
+     bliebe unten ein weißer Streifen stehen. dvh folgt der Leiste. */
+  @supports (height:100dvh){
+    .hero.is-pinned .hero__stage,
+    .rooms.is-pinned .rooms__viewport{ height:100dvh; }
+  }
+
+  /* Während die Sequenz läuft, darf der Browser die Geste nicht selbst
+     als horizontales Wischen deuten — sonst kämpfen Finger und Animation
+     um dieselbe Bewegung. Vertikal bleibt alles erlaubt. */
+  .hero.is-pinned .hero__stage,
+  .rooms.is-pinned .rooms__viewport{ touch-action:pan-y; }
+
+  /* Der Laufbalken zeigt, wie weit die Sequenz ist. Ohne ihn fühlt sich
+     die gebremste Seite wie hängengeblieben an statt wie geführt. */
+  .hero.is-pinned .film__progress{ display:block; }
+  .rooms.is-pinned .rooms__progress{ display:block; }
+
+  /* Angeheftet trägt die Sektion nur noch den Scrollweg — der Abstand
+     oben und unten würde als leere Fläche unter der Bühne erscheinen. */
+  .rooms.is-pinned{ padding-block:0; }
+  .rooms.is-pinned .rooms__viewport{
+    overflow:hidden;
+    scroll-snap-type:none;
+  }
+  .rooms.is-pinned .rooms__track{ padding-block:0; }
 }
 
 /* Barrierefreiheit: Bewegung aus */

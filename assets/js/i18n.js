@@ -97,25 +97,10 @@ window.GABI_I18N = {
     "27. November 2025": "27 November 2025",
     "8. September 2025": "8 September 2025",
 
-    /* Warum wir */
-    "Why Stay With Us": "Why Stay With Us",
-    "Fünf Gründe": "Five reasons",
-    "für Hotel Gabi.": "to choose Hotel Gabi.",
-    "Ideale Lage": "Ideal location",
-    "Park „Erholung und Kultur\", Mall Plovdiv und die Altstadt in wenigen Minuten erreichbar.":
-      "Recreation and Culture Park, Mall Plovdiv and the Old Town are all minutes away.",
-    "Elegante Zimmer": "Elegant rooms",
-    "Drei Kategorien vom Doppelzimmer bis zum Apartment, alle mit Klimaanlage, Minibar und kostenlosem WLAN.":
-      "Three categories from double room to apartment, all with air conditioning, minibar and free Wi-Fi.",
-    "Persönlicher Service": "Personal service",
-    "Ein kleines Haus mit aufmerksamem Team — keine Warteschlangen, keine Anonymität.":
-      "A small house with an attentive team — no queues, no anonymity.",
+    /* "Relax-Bereich" stand einmal bei den fünf Gründen. Die sind von der
+       Startseite entfernt; der Begriff wird aber auf about und den
+       Zimmerseiten weiter gebraucht. */
     "Relax-Bereich": "Relax area",
-    "Sauna, Solarium und Massage direkt im Haus — Erholung ohne Umweg.":
-      "Sauna, solarium and massage right in the house — recovery without a detour.",
-    "Für jeden Anlass": "For every occasion",
-    "Von der Hochzeit bis zur Konferenz richten wir Ihre Feier oder Ihr Meeting im Haus aus.":
-      "From weddings to conferences, we host your celebration or meeting in the house.",
 
     /* Konferenz / Business */
     "Konferenzsaal": "Conference hall",
@@ -398,24 +383,8 @@ window.GABI_I18N = {
     "27. November 2025": "27 ноември 2025",
     "8. September 2025": "8 септември 2025",
 
-    "Why Stay With Us": "Защо при нас",
-    "Fünf Gründe": "Пет причини",
-    "für Hotel Gabi.": "за Хотел Габи.",
-    "Ideale Lage": "Идеална локация",
-    "Park „Erholung und Kultur\", Mall Plovdiv und die Altstadt in wenigen Minuten erreichbar.":
-      "Парк „Отдих и култура“, Мол Пловдив и Старият град са на минути.",
-    "Elegante Zimmer": "Елегантни стаи",
-    "Drei Kategorien vom Doppelzimmer bis zum Apartment, alle mit Klimaanlage, Minibar und kostenlosem WLAN.":
-      "Три категории — от двойна стая до апартамент, всички с климатик, минибар и безплатен Wi-Fi.",
-    "Persönlicher Service": "Личен подход",
-    "Ein kleines Haus mit aufmerksamem Team — keine Warteschlangen, keine Anonymität.":
-      "Малък хотел с внимателен екип — без опашки, без анонимност.",
+    /* siehe Hinweis im englischen Abschnitt */
     "Relax-Bereich": "Релакс зона",
-    "Sauna, Solarium und Massage direkt im Haus — Erholung ohne Umweg.":
-      "Сауна, солариум и масаж на място — възстановяване без обиколки.",
-    "Für jeden Anlass": "За всеки повод",
-    "Von der Hochzeit bis zur Konferenz richten wir Ihre Feier oder Ihr Meeting im Haus aus.":
-      "От сватба до конференция — организираме вашето събитие в хотела.",
 
     "Konferenzsaal": "Конферентна зала",
     "Business-Meetings im": "Бизнес срещи в",
@@ -618,7 +587,6 @@ window.GABI_I18N = {
   de: {
     "About Us": "Über uns",
     "Guest Reviews": "Gästebewertungen",
-    "Why Stay With Us": "Warum zu uns",
     "For your special occasion": "Für Ihren besonderen Anlass",
     "A romantic escape for two": "Romantische Auszeit zu zweit",
     "Congress events and exhibitions": "Kongresse und Ausstellungen",

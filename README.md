@@ -44,6 +44,34 @@ gesetzt, nicht über eine CSS-Variable. Ein `url()` in einer CSS-Variablen
 löst der Browser relativ zur **Stylesheet-Datei** auf, was auf dem Server
 zu 404 führte.
 
+**Scroll-Sequenzen (Hero-Film und Zimmer-Reihe):** Beide Sektionen werden
+per JS angeheftet — die Sektion bekommt eine Höhe, die Bühne darin steht
+per `position:sticky` still, und die Scrollposition steuert die Animation.
+Erkennbar an der Klasse `is-pinned`, die JS setzt. Alle CSS-Regeln für den
+nicht angehefteten Fall stehen deshalb unter `:not(.is-pinned)` — wer dort
+ein `!important` einbaut, hebelt die Inline-Höhe von JS aus und die
+Sequenz steht still.
+
+Desktop und Handy unterscheiden sich in einem Punkt: Der Desktop **scrubbt**
+den Film (Scrollposition = Zeitmarke). Auf dem Handy geht das nicht, weil
+mobile Browser beim Seeken oft keine Frames rendern. Dort **läuft** der Film
+und wird über die Abspielgeschwindigkeit an die Scrollposition
+herangeregelt — sichtbar gekoppelt, aber nie eingefroren.
+
+**scrollGuard (nur Touch):** Ein Wisch trägt die Seite nach dem Loslassen
+weit weiter; eine Sequenz wäre nach einer Geste vorbei. Der Guard übernimmt
+deshalb genau diesen Nachlauf und führt ihn mit gedeckelter Geschwindigkeit
+durch den Abschnitt. Solange der Finger liegt, scrollt der Browser normal.
+An den Rändern gibt der Guard sofort ab — es wird nichts dauerhaft
+blockiert.
+
+**Adressleiste:** Auf dem Handy löst schon das Ein- und Ausblenden der
+Adressleiste ein `resize` aus. Neu vermessen würde die Sektionshöhe mitten
+im Scrollen ändern und die Seite springt — deshalb reagiert `onViewportChange`
+in `main.js` nur auf echte Breitenwechsel. Aus demselben Grund steht die
+Bühnenhöhe auf dem Handy in `dvh`, nicht in `svh`: sonst bliebe unten ein
+weißer Streifen, sobald sich die Leiste ausblendet.
+
 ## Preise (Stand: von hotelgabi-bg.com übernommen)
 
 | | |

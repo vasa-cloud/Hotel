@@ -4,6 +4,7 @@
 
    Module:
      1. utils          — Helfer
+     1b. scrollGuard   — Nachlauf des Touch-Scrolls bändigen (nur Handy)
      2. reveal         — Eintritts-Animationen (IntersectionObserver)
      3. header         — Zustand beim Scrollen
      4. smoothAnchors  — geglättete Sprünge zu Ankern
@@ -21,6 +22,9 @@
   /* --- 1 · utils ------------------------------------------- */
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var desktop = window.matchMedia('(min-width: 860px)');
+  /* Gegenstück zu desktop: alles darunter fährt die Handy-Fassung der
+     Sequenzen. Bewusst dieselbe Grenze wie im CSS (859 px). */
+  var narrow  = window.matchMedia('(max-width: 859px)');
 
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
@@ -39,6 +43,150 @@
   }
 
   function motionOff() { return reduced.matches; }
+
+  /* Auf dem Handy löst schon das Ein- und Ausblenden der Adressleiste ein
+     resize aus — die Höhe ändert sich dabei um 60 bis 80 px. Würde daraufhin
+     neu vermessen, änderte sich die Höhe einer angehefteten Sektion mitten
+     im Scrollen und die Seite darunter springt. Nur echte Breitenwechsel
+     (Drehen, Fenstergröße) lösen deshalb eine Neumessung aus. */
+  function onViewportChange(fn) {
+    var lastW = window.innerWidth;
+    return function () {
+      var w = window.innerWidth;
+      if (w === lastW && narrow.matches) return;
+      lastW = w;
+      fn();
+    };
+  }
+
+  /* --- 1b · scrollGuard ------------------------------------- */
+  /* Nur für Touch. Ein Wisch trägt die Seite nach dem Loslassen noch weit
+     weiter — eine angeheftete Sequenz wäre damit nach einer einzigen
+     Geste vorbei, mit übersprungenen Zwischenschritten.
+
+     Der Guard greift deshalb genau an einer Stelle ein: solange der Finger
+     liegt, scrollt der Browser ganz normal 1:1 — das fühlt sich am
+     natürlichsten an und ein Daumenzug schafft ohnehin höchstens eine
+     Bildschirmhöhe. Erst der Nachlauf danach wird übernommen und mit
+     gedeckelter Geschwindigkeit durch den Abschnitt geführt.
+
+     An den Rändern eines Abschnitts gibt er sofort wieder ab: der nächste
+     Wisch scrollt die Seite ganz gewöhnlich weiter. Es wird nie etwas
+     dauerhaft blockiert — fällt der Guard aus, bleibt normales Scrollen. */
+  var scrollGuard = (function () {
+    var ranges = [];        // Funktionen → {from,to} in Dokumentkoordinaten
+    var gliding = false;    // führt gerade selbst statt den Browser zu lassen
+    var suspended = false;  // fremde Scroll-Animation läuft (Ankersprung)
+    var raf = null;
+    var lastY = 0, lastTs = 0, still = 0;
+    var vel = 0, edge = 0, dir = 0;
+
+    var DECAY = 0.0028;     // 1/ms — der Nachlauf klingt in gut 350 ms ab
+    var MIN_V = 0.05;       // px/ms, darunter ist Schluss
+    var MIN_MS = 900;       // so lange braucht ein Abschnitt mindestens
+
+    /* html{scroll-behavior:smooth} würde jeden dieser Schritte glätten
+       und damit gegen die eigene Führung arbeiten. */
+    function setY(y) {
+      try { window.scrollTo({ top: y, behavior: 'instant' }); }
+      catch (err) { window.scrollTo(0, y); }
+    }
+
+    function maxY() {
+      return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    }
+
+    /* Streng innerhalb: genau auf der Kante muss der normale Scroll
+       übernehmen, sonst käme man aus dem Abschnitt nicht mehr heraus. */
+    function rangeAt(y) {
+      for (var i = 0; i < ranges.length; i++) {
+        var r = ranges[i]();
+        if (r && y > r.from + 2 && y < r.to - 2) return r;
+      }
+      return null;
+    }
+
+    function stop() {
+      gliding = false;
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    }
+
+    function frame(ts) {
+      raf = null;
+      if (suspended) { stop(); return; }
+
+      var dt = lastTs ? Math.min(ts - lastTs, 50) : 16.7;
+      lastTs = ts;
+
+      if (gliding) {
+        vel *= Math.exp(-DECAY * dt);
+        if (Math.abs(vel) < MIN_V) { stop(); return; }
+
+        var y = clamp(window.scrollY + vel * dt, 0, maxY());
+        /* Am Ende des Abschnitts hält die Führung an. Der nächste Wisch
+           setzt dann ganz normal auf der Seite auf. */
+        if ((dir > 0 && y >= edge) || (dir < 0 && y <= edge)) {
+          setY(edge); stop(); return;
+        }
+        setY(y);
+        raf = requestAnimationFrame(frame);
+        return;
+      }
+
+      /* Beobachten: wie schnell trägt der Browser gerade von selbst? */
+      var cur = window.scrollY;
+      var moved = cur - lastY;
+      var v = moved / dt;
+      lastY = cur;
+
+      if (Math.abs(moved) < 0.4) {
+        still += dt;
+        if (still > 160) { stop(); return; }
+      } else {
+        still = 0;
+      }
+
+      var r = rangeAt(cur);
+      if (r && Math.abs(v) > MIN_V) {
+        dir = v > 0 ? 1 : -1;
+        /* Tempo so deckeln, dass der Abschnitt nie schneller als in
+           MIN_MS durchläuft — unabhängig davon, wie hart gewischt wurde. */
+        var lim = Math.max(0.35, (r.to - r.from) / MIN_MS);
+        vel = clamp(v, -lim, lim);
+        edge = dir > 0 ? r.to : r.from;
+        gliding = true;
+      }
+      raf = requestAnimationFrame(frame);
+    }
+
+    function begin() {
+      if (suspended || !ranges.length) return;
+      lastY = window.scrollY;
+      lastTs = 0;
+      still = 0;
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+
+    if ('ontouchstart' in window) {
+      /* Der Finger selbst scrollt immer nativ — hier wird nichts
+         abgefangen, nur eine noch laufende Führung beendet. */
+      window.addEventListener('touchstart', stop, { passive: true });
+      window.addEventListener('touchend', begin, { passive: true });
+      window.addEventListener('touchcancel', begin, { passive: true });
+      /* Mausrad und Tastatur bleiben unangetastet. */
+      window.addEventListener('wheel', stop, { passive: true });
+      window.addEventListener('keydown', stop, { passive: true });
+    }
+
+    return {
+      /* fn liefert {from,to} oder null, wenn der Abschnitt gerade nicht
+         angeheftet ist — damit ist der Guard auf dem Desktop untätig. */
+      add: function (fn) { ranges.push(fn); },
+      suspend: function () { suspended = true; stop(); },
+      resume: function () { suspended = false; },
+      stop: stop
+    };
+  })();
 
   /* --- 2 · reveal ------------------------------------------ */
   function initReveal() {
@@ -120,6 +268,8 @@
 
     function stop() {
       if (animId) { cancelAnimationFrame(animId); animId = null; }
+      /* Ab hier gehört der Scroll wieder dem Guard. */
+      scrollGuard.resume();
     }
     ['wheel', 'touchstart', 'keydown'].forEach(function (evt) {
       window.addEventListener(evt, stop, { passive: true });
@@ -127,6 +277,11 @@
 
     function scrollTo(targetY, duration) {
       stop();
+      /* Der Sprung führt durch die angehefteten Abschnitte hindurch. Ohne
+         diese Pause würde der Guard die Bewegung als Nachlauf deuten und
+         gegen die eigene Easing-Kurve arbeiten. */
+      scrollGuard.suspend();
+
       var startY = window.scrollY;
       var delta = targetY - startY;
       var t0 = null;
@@ -135,8 +290,8 @@
         if (t0 === null) t0 = ts;
         var p = clamp((ts - t0) / duration, 0, 1);
         window.scrollTo(0, startY + delta * easeInOutCubic(p));
-        if (p < 1) animId = requestAnimationFrame(step);
-        else animId = null;
+        if (p < 1) { animId = requestAnimationFrame(step); }
+        else { animId = null; scrollGuard.resume(); }
       }
       animId = requestAnimationFrame(step);
     }
@@ -164,9 +319,18 @@
      bestimmt die Zeitmarke. Die Hero-Bühne bleibt so lange stehen, bis der
      Film durchgelaufen ist — danach gibt sie die Seite wieder frei.
 
-     Auf schmalen Screens ist Scrubbing unzuverlässig (mobile Browser
-     rendern Frames beim Seeken oft nicht). Dort läuft das Video schlicht
-     stumm in Schleife — gleiche Bildsprache, kein Risiko.               */
+     Auf schmalen Screens ist Scrubbing unzuverlässig: mobile Browser
+     rendern Frames beim Seeken oft nicht, und bei 6 Mbit/s wird jeder
+     Sprung zur Ruckelquelle. Die Bühne wird dort trotzdem angeheftet und
+     am Scroll geführt — nur der Film wird nicht gesprungen, sondern
+     ECHT abgespielt. Gekoppelt wird über die Abspielgeschwindigkeit:
+     sie steuert den Film sanft auf die Zeitmarke zu, die zur
+     Scrollposition gehört. Damit hängt das Bild am Scroll, ohne je
+     einzufrieren — Smoothness geht hier vor Bildgenauigkeit.
+
+     Ohne JS, bei reduzierter Bewegung oder wenn die Filmlänge nicht
+     ermittelbar ist, bleibt es beim alten Verhalten: Schleife, kein
+     Anheften.                                                          */
   function initFilmScrub() {
     var section = document.querySelector('[data-film]');
     if (!section) return;
@@ -180,6 +344,18 @@
        waren es mit 320 fast drei, was sich zäh anfühlte. */
     var PX_PER_SECOND = 120;
 
+    /* Handy: 300 px Scrollweg entsprechen einer Sekunde Film. Wer in
+       ruhigem Tempo scrollt (rund 300 px/s), sieht den Film dadurch in
+       normaler Geschwindigkeit — schneller gewischt zieht er an, langsamer
+       läuft er aus. Der Wert bestimmt nur die Kopplung, nicht den
+       Scrollweg: der steht in MOBILE_SCREENS. */
+    var PX_PER_SECOND_MOBILE = 300;
+    /* Scrollweg der angehefteten Bühne, in Bildschirmhöhen. 1.5 heißt:
+       eine volle Daumenbewegung schafft gut die Hälfte — die Sequenz kann
+       also nicht mit einem Wisch übersprungen werden, bleibt aber kurz
+       genug, um nicht zäh zu wirken. */
+    var MOBILE_SCREENS = 1.5;
+
     var duration = 0;
     var distance = 0;
     var currentT = 0;    // gerenderte Zeitmarke
@@ -187,6 +363,13 @@
     var running = false;
     var visible = false;
     var lastTs = 0;
+
+    /* Handy-Zweig */
+    var mobileOn = false;   // Bühne angeheftet, Film läuft gekoppelt
+    var mRunning = false;
+    var mP = 0;             // Fortschritt der Sequenz, 0…1
+    var mSeekAt = 0;        // Zeitpunkt des letzten Notsprungs
+    var retryBound = false;
 
     /* --- Sprungsteuerung ---
        Es darf immer nur ein Sprung gleichzeitig laufen. Trifft währenddessen
@@ -239,8 +422,32 @@
 
     function active() { return desktop.matches && !motionOff() && duration > 0; }
 
+    /* Handy-Fassung: gleiche angeheftete Bühne, aber laufender Film statt
+       Sprüngen. Braucht die Filmlänge nicht — die Höhe steht sofort. */
+    function pinMobile() { return narrow.matches && !motionOff(); }
+
+    /* Abspielen kann am Energiesparmodus scheitern. Dann bleibt das erste
+       Bild stehen; beim ersten Antippen wird es noch einmal versucht. */
+    function playSoft() {
+      var p = video.play();
+      if (!p || !p.catch) return;
+      p.catch(function () {
+        if (retryBound) return;
+        retryBound = true;
+        var retry = function () {
+          var q = video.play();
+          if (q && q.catch) q.catch(function () {});
+          document.removeEventListener('touchstart', retry);
+          document.removeEventListener('click', retry);
+        };
+        document.addEventListener('touchstart', retry, { passive: true });
+        document.addEventListener('click', retry);
+      });
+    }
+
     function loopMode() {
-      /* Mobil / reduzierte Bewegung: kein Scrubbing. */
+      /* Ohne Anheften: kein Scrubbing, kein Scrollbezug. */
+      mobileOn = false;
       section.classList.remove('is-pinned');
       section.style.height = '';
       if (progress) progress.style.width = '';
@@ -249,16 +456,14 @@
 
       video.loop = true;
       video.muted = true;
-      var p = video.play();
-      if (p && p.catch) p.catch(function () { /* Autoplay blockiert — Poster bleibt */ });
+      video.playbackRate = 1;
+      playSoft();
     }
 
-    function measure() {
-      if (!duration) return;
-
-      if (!active()) { loopMode(); return; }
-
+    function scrubMode() {
+      mobileOn = false;
       video.loop = false;
+      video.playbackRate = 1;
       video.pause();
 
       distance = Math.round(duration * PX_PER_SECOND);
@@ -271,6 +476,31 @@
       render();
     }
 
+    function pinMobileMode() {
+      video.loop = true;
+      video.muted = true;
+      playSoft();
+
+      /* Der Scrollweg hängt hier an der Bildschirmhöhe, nicht an der
+         Filmlänge: gefragt ist ein verlässliches Gefühl auf jedem Gerät,
+         keine bildgenaue Abbildung des Films. */
+      distance = Math.round(clamp(window.innerHeight * MOBILE_SCREENS, 800, 1700));
+      section.classList.add('is-pinned');
+      section.style.height = (window.innerHeight + distance) + 'px';
+
+      mobileOn = true;
+      readMobile();
+      render();
+      if (visible) mStart();
+    }
+
+    function measure() {
+      if (duration > 0 && active()) { scrubMode(); return; }
+      if (pinMobile()) { pinMobileMode(); return; }
+      if (!duration) return;
+      loopMode();
+    }
+
     function readTarget() {
       var travel = section.offsetHeight - window.innerHeight;
       if (travel <= 0) { targetT = 0; return; }
@@ -278,13 +508,78 @@
       targetT = p * duration;
     }
 
+    function readMobile() {
+      var travel = section.offsetHeight - window.innerHeight;
+      mP = travel > 0 ? clamp(-section.getBoundingClientRect().top / travel, 0, 1) : 0;
+    }
+
     /* Der Laufbalken hängt an der Scrollposition, nicht am Decoder —
        sonst friert er mit ein, sobald ein Sprung länger dauert. */
     function render() {
-      if (progress && duration > 0) {
+      if (!progress) return;
+      if (mobileOn) {
+        progress.style.width = (mP * 100).toFixed(2) + '%';
+      } else if (duration > 0) {
         progress.style.width = ((clamp(currentT, 0, duration) / duration) * 100).toFixed(2) + '%';
       }
     }
+
+    /* --- Handy: Film an den Scroll koppeln -------------------
+       Statt zu springen wird die Abspielgeschwindigkeit nachgeregelt.
+       Liegt der Film hinter der Scrollposition, zieht er an; liegt er
+       davor, läuft er langsamer weiter — er steht aber nie still. */
+    function mFrame() {
+      if (!mRunning) return;
+      if (!mobileOn) { mRunning = false; return; }
+
+      readMobile();
+      render();
+
+      if (duration > 0 && !video.paused) {
+        /* Nur ein Ausschnitt des Films wird auf den Scrollweg gelegt:
+           Über die volle Länge müsste er bei normalem Scrolltempo
+           vierfach laufen, was wie Vorspulen aussieht. */
+        var span = Math.min(duration, distance / PX_PER_SECOND_MOBILE);
+        var d = mP * span - video.currentTime;
+
+        /* Der Film läuft in Schleife — die kürzere Richtung im Kreis
+           nehmen, sonst gilt der Rücksprung auf 0 als riesiger Abstand. */
+        while (d >  duration / 2) d -= duration;
+        while (d < -duration / 2) d += duration;
+
+        /* Ein einziger Sprung, wenn der Abstand nicht mehr einzuholen ist
+           (z. B. nach langem Stillstand oder Zurückscrollen). Selten und
+           gedrosselt — genau das verträgt ein mobiler Decoder noch. */
+        var now = Date.now();
+        if (Math.abs(d) > 2.6 && now - mSeekAt > 700) {
+          mSeekAt = now;
+          try { video.currentTime = clamp(mP * span, 0, duration - 0.05); } catch (err) {}
+        } else {
+          var rate = clamp(1 + d * 0.6, 0.5, 3);
+          if (Math.abs(video.playbackRate - rate) > 0.04) {
+            try { video.playbackRate = rate; } catch (err) {}
+          }
+        }
+      }
+
+      if (visible) requestAnimationFrame(mFrame);
+      else mRunning = false;
+    }
+
+    function mStart() {
+      if (mRunning || !mobileOn) return;
+      mRunning = true;
+      requestAnimationFrame(mFrame);
+    }
+
+    /* Solange die Bühne angeheftet ist, führt der Guard den Nachlauf des
+       Touch-Scrolls durch genau diesen Bereich. Auf dem Desktop liefert
+       die Funktion null — dort bleibt der Guard untätig. */
+    scrollGuard.add(function () {
+      if (!mobileOn) return null;
+      var top = section.getBoundingClientRect().top + window.scrollY;
+      return { from: top, to: top + section.offsetHeight - window.innerHeight };
+    });
 
     function frame(ts) {
       if (!running) return;
@@ -320,8 +615,13 @@
       duration = video.duration;
       if (!isFinite(duration) || duration <= 0) { duration = 0; return; }
       measure();
-      if (visible) start();
+      if (visible) { start(); mStart(); }
     }
+
+    /* Auf dem Handy hängt die Sektionshöhe nicht an der Filmlänge. Sie darf
+       deshalb sofort stehen — sonst würde die halbe Seite darunter beim
+       Eintreffen der Metadaten nachrutschen. */
+    if (pinMobile()) measure();
 
     if (video.readyState >= 1) onMeta();
     else video.addEventListener('loadedmetadata', onMeta, { once: true });
@@ -329,14 +629,15 @@
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         visible = entries[0].isIntersecting;
-        if (visible) start();
+        if (visible) { start(); mStart(); }
       }, { rootMargin: '20% 0px 20% 0px' }).observe(section);
     } else {
       visible = true;
       start();
+      mStart();
     }
 
-    window.addEventListener('resize', debounce(measure, 160));
+    window.addEventListener('resize', debounce(onViewportChange(measure), 160));
     if (desktop.addEventListener) desktop.addEventListener('change', measure);
     if (reduced.addEventListener) reduced.addEventListener('change', measure);
   }
@@ -363,6 +664,11 @@
 
     function active() { return desktop.matches && !motionOff(); }
 
+    /* Auf dem Handy läuft dieselbe Mechanik, nur mit längerem Scrollweg —
+       siehe factor in measure(). Ohne JS bleibt die Reihe ein nativer
+       Querscroller, so wie bisher. */
+    function pinMobile() { return narrow.matches && !motionOff(); }
+
     function reset() {
       section.style.height = '';
       section.classList.remove('is-pinned');
@@ -373,10 +679,13 @@
     }
 
     function measure() {
-      if (!active()) { reset(); return; }
+      if (!active() && !pinMobile()) { reset(); return; }
 
       section.classList.add('is-pinned');
       track.style.transform = 'translate3d(0,0,0)';
+      /* Vorher war die Reihe ein Querscroller; ein stehengebliebener
+         Versatz würde sich sonst zur Verschiebung addieren. */
+      viewport.scrollLeft = 0;
 
       distance = Math.max(0, Math.round(track.getBoundingClientRect().width - viewport.clientWidth));
 
@@ -384,8 +693,14 @@
 
       /* Scrollweg bewusst kürzer als die horizontale Strecke: bei 1:1
          musste man sehr lange scrollen. Mit 0.55 legt die Reihe pro
-         Mausrad-Umdrehung fast doppelt so viel Weg zurück. */
-      section.style.height = (window.innerHeight + distance * 0.55) + 'px';
+         Mausrad-Umdrehung fast doppelt so viel Weg zurück.
+
+         Auf dem Handy fast 1:1 (0.85): dort ist der Daumenweg pro Geste
+         kurz, und die Zimmer sollen einzeln vorbeiziehen statt im Rutsch.
+         Bei rund 1250 px Reihenbreite ergibt das gut 1,3 Bildschirme
+         Scrollweg — genug, dass ein Wisch die Reihe nicht überspringt. */
+      var factor = active() ? 0.55 : 0.85;
+      section.style.height = (window.innerHeight + distance * factor) + 'px';
 
       readTarget();
       current = target;
@@ -431,12 +746,21 @@
     }
 
     function start() {
-      if (running || !active()) return;
+      if (running || (!active() && !pinMobile()) || distance === 0) return;
       running = true;
       lastTs = 0;
       track.style.willChange = 'transform';
       requestAnimationFrame(frame);
     }
+
+    /* Solange die Reihe angeheftet ist, führt der Guard den Nachlauf des
+       Touch-Scrolls durch genau diesen Bereich — sonst wäre die Reihe
+       nach einem harten Wisch in einem Rutsch durchgelaufen. */
+    scrollGuard.add(function () {
+      if (!narrow.matches || !section.classList.contains('is-pinned')) return null;
+      var top = section.getBoundingClientRect().top + window.scrollY;
+      return { from: top, to: top + section.offsetHeight - window.innerHeight };
+    });
 
     /* Die Schleife läuft ausschließlich, solange die Sektion in Sicht ist. */
     if ('IntersectionObserver' in window) {
@@ -450,8 +774,11 @@
     }
 
     /* Bildmaße können nachträglich eintreffen → neu vermessen */
-    window.addEventListener('load', measure);
-    window.addEventListener('resize', debounce(measure, 160));
+    window.addEventListener('load', function () { measure(); start(); });
+    window.addEventListener('resize', debounce(onViewportChange(function () {
+      measure();
+      start();
+    }), 160));
     if (desktop.addEventListener) desktop.addEventListener('change', measure);
     if (reduced.addEventListener) reduced.addEventListener('change', measure);
 
@@ -522,10 +849,14 @@
     var running = false;
     var visible = false;
 
-    /* Greift nur, solange die Bühne NICHT angeheftet ist — auf dem
-       Desktop übernimmt der Film selbst die Bewegung. */
+    /* Auf dem Desktop trägt der gescrubbte Film die Bewegung allein —
+       dort bleibt dieses Modul stumm, sobald die Bühne angeheftet ist.
+       Auf dem Handy ist es umgekehrt: der Film läuft dort nur, die
+       sichtbare Bewegung (Zoom, Ausblenden) kommt von hier. */
     function active() {
-      return !section.classList.contains('is-pinned') && !motionOff();
+      if (motionOff()) return false;
+      if (section.classList.contains('is-pinned')) return narrow.matches;
+      return true;
     }
 
     function reset() {
@@ -540,7 +871,12 @@
 
       if (!active()) { reset(); running = false; return; }
 
-      var travel = section.offsetHeight || 1;
+      /* Angeheftet zählt nur der Weg, den die Bühne wirklich stehenbleibt.
+         Mit der vollen Sektionshöhe käme die Bewegung nie über 60 %. */
+      var travel = section.classList.contains('is-pinned')
+        ? (section.offsetHeight - window.innerHeight)
+        : section.offsetHeight;
+      if (travel <= 0) travel = 1;
       var p = clamp(-section.getBoundingClientRect().top / travel, 0, 1);
 
       video.style.transform = 'scale(' + (1 + p * 0.12).toFixed(4) + ')';
@@ -558,7 +894,11 @@
     }
 
     function start() {
-      if (running || !active()) return;
+      /* Wechselt die Breite, während der Hero außer Sicht ist, läuft die
+         Schleife nicht mehr und könnte den letzten Zoom-Wert stehen lassen.
+         Deshalb hier aufräumen statt nur auszusteigen. */
+      if (!active()) { reset(); return; }
+      if (running) return;
       running = true;
       requestAnimationFrame(frame);
     }
@@ -573,10 +913,10 @@
       start();
     }
 
-    window.addEventListener('resize', debounce(function () {
+    window.addEventListener('resize', debounce(onViewportChange(function () {
       reset();
       if (visible) start();
-    }, 160));
+    }), 160));
   }
 
   /* --- 7c · lightbox --------------------------------------- */

@@ -400,6 +400,19 @@
 
     function active() { return desktop.matches && !motionOff() && duration > 0; }
 
+    /* Die Filmquelle wird erst eingehängt, wenn wirklich Desktop vorliegt.
+       Stünde sie im HTML, lüde jedes Handy 6,2 MB mit, obwohl dort das
+       Nachtbild aus dem CSS zu sehen ist. Wer das Fenster nachträglich
+       aufzieht, bekommt den Film hier nachgereicht. */
+    function ensureSource() {
+      if (video.getAttribute('src')) return;
+      if (!desktop.matches) return;
+      var quelle = video.getAttribute('data-src');
+      if (!quelle) return;
+      video.setAttribute('src', quelle);
+      video.load();
+    }
+
     /* Abspielen scheitert auf dem Handy häufiger, als man denkt: im
        Energiesparmodus verweigern iOS und Android es grundsätzlich, und
        bei 6 Mbit/s ist oft schlicht noch zu wenig gepuffert. Dann bleibt
@@ -534,8 +547,10 @@
       if (visible) start();
     }
 
+    ensureSource();
+
+    video.addEventListener('loadedmetadata', onMeta);
     if (video.readyState >= 1) onMeta();
-    else video.addEventListener('loadedmetadata', onMeta, { once: true });
 
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
@@ -547,8 +562,10 @@
       start();
     }
 
-    window.addEventListener('resize', debounce(onViewportChange(measure), 160));
-    if (desktop.addEventListener) desktop.addEventListener('change', measure);
+    function onBreite() { ensureSource(); measure(); }
+
+    window.addEventListener('resize', debounce(onViewportChange(onBreite), 160));
+    if (desktop.addEventListener) desktop.addEventListener('change', onBreite);
     if (reduced.addEventListener) reduced.addEventListener('change', measure);
   }
 
@@ -780,7 +797,12 @@
       var travel = section.offsetHeight || 1;
       var p = clamp(-section.getBoundingClientRect().top / travel, 0, 1);
 
-      video.style.transform = 'scale(' + (1 + p * 0.12).toFixed(4) + ')';
+      /* Auf dem Handy liegt statt des Films das Nachtbild im Hintergrund
+         und bleibt bewusst ruhig — das Video-Element ist dort ausgeblendet
+         und hat gar keine Quelle. Nur Logo und Fuß blenden aus. */
+      if (!narrow.matches) {
+        video.style.transform = 'scale(' + (1 + p * 0.12).toFixed(4) + ')';
+      }
 
       /* Faktor bewusst nur knapp über 1: mit 1.7 war der Schriftzug schon
          bei halbem Scrollweg verschwunden, das wirkte abrupt. So bleibt er

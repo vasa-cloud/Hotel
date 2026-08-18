@@ -1,4 +1,4 @@
-# Hotel Gabi — Website
+| Hero | angeheftet, Video wird **gescrubbt** (Scrollposition = Zeitmarke) | **nicht** angeheftet, statt des Films das Nachtbild `img/hero/hotel-abend.jpg` |)# Hotel Gabi — Website
 
 Reines HTML/CSS/JavaScript. **Kein Build-Schritt, keine Abhängigkeiten** —
 `index.html` doppelklicken genügt zum Ansehen.
@@ -23,8 +23,8 @@ video-test.html       Werkzeug zur Fehlersuche, nicht Teil der Website
 assets/css/style.css  Gestaltung, nummerierte Abschnitte 1–12
 assets/js/main.js     Interaktion, nummerierte Module
 assets/js/i18n.js     Übersetzungen EN + BG
-assets/img/           brand · rooms · gallery
-assets/video/         hotel.mp4 (Hero, 6,2 MB)
+assets/img/           brand · hero · rooms · gallery
+assets/video/         hotel.mp4 (Hero am Desktop, 6,2 MB)
 ```
 
 ### Wichtig zum Verständnis
@@ -55,7 +55,7 @@ Was wo angeheftet wird:
 
 | | Desktop | Handy |
 |---|---|---|
-| Hero-Film | angeheftet, Video wird **gescrubbt** (Scrollposition = Zeitmarke) | **nicht** angeheftet, Video läuft stumm in Schleife |
+| Hero | angeheftet, Video wird **gescrubbt** (Scrollposition = Zeitmarke) | **nicht** angeheftet, statt des Films das Nachtbild `img/hero/hotel-abend.jpg` |
 | Zimmer-Reihe | angeheftet, Faktor 0.55 | angeheftet, Faktor 0.85 |
 
 Der Hero bleibt auf dem Handy bewusst frei scrollbar: dort steht das
@@ -64,6 +64,13 @@ und die drei Sterne im Kopfzeilen-Logo bei 30 px Höhe nur noch 8 bzw. 6 px
 groß sind. Eine Sequenz, die den Scroll anhält, stünde genau davor. Solange
 der Hero sichtbar ist, blendet sich deshalb auch das kleine Logo in der
 Kopfzeile aus — sonst stünde dieselbe Grafik zweimal im Bild.
+
+Das Video wird unterhalb von 860 px **gar nicht geladen**: die Quelle steht
+im HTML in `data-src`, `main.js` hängt sie erst als `src` ein, wenn wirklich
+Desktop vorliegt. Mit `src` im HTML lüde jedes Handy die 6,2 MB mit, obwohl
+dort das Nachtbild zu sehen ist. Dessen Ausschnitt steht bewusst auf
+`background-position:30%` — bei 50 % schneidet der Rand das Dach-Leuchtschild
+mitten im Wort an und „HOTEL GABI" stünde dreimal im selben Bild.
 
 **scrollGuard (nur Touch):** Ein Wisch trägt die Seite nach dem Loslassen
 weit weiter; eine Sequenz wäre nach einer Geste vorbei. Der Guard übernimmt

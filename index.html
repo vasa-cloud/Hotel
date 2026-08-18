@@ -78,10 +78,17 @@
     <!-- bleibt stehen, während das Video am Scrollen hängt -->
     <div class="hero__stage" data-film-stage>
 
-      <!-- Vollflächiges Motiv. Läuft nicht von selbst, sondern am Scrollrad. -->
+      <!-- Vollflächiges Motiv. Auf dem Desktop der Film, der am Scrollrad
+           läuft; auf dem Handy das Nachtbild des Hauses, das per CSS auf
+           .hero__film liegt.
+
+           Die Quelle steht bewusst in data-src statt in src: mit src würde
+           jedes Handy die 6,2 MB mitladen, obwohl das Video dort gar nicht
+           gezeigt wird. main.js hängt sie erst ein, wenn wirklich Desktop
+           vorliegt. -->
       <div class="hero__film">
         <video class="hero__video" data-film-video
-               src="assets/video/hotel.mp4"
+               data-src="assets/video/hotel.mp4"
                muted playsinline preload="auto"
                disablepictureinpicture
                aria-label="Hotel Gabi — Ansicht des Hauses"></video>

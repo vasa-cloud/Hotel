@@ -1352,11 +1352,40 @@ body.has-lightbox{ overflow:hidden; }
    Die Sequenz bleibt dann horizontal, nur nativ gescrollt.
    Den angehefteten Fall regelt der Block weiter unten. */
 @media (max-width:859px){
-  /* Ohne Anheften läuft das Video von selbst in Schleife.
-     Ohne Höhenzwang darf es die volle Breite nehmen. */
+  /* Kein Anheften, kein Scrollweg — die Bühne ist genau einen Schirm hoch. */
   .hero:not(.is-pinned){ height:auto; }
   .hero:not(.is-pinned) .hero__stage{ position:static; height:auto; min-height:100svh; }
   .hero:not(.is-pinned) .film__progress{ display:none; }
+
+  /* Statt des Films trägt hier das Nachtbild des Hauses den Hero. Der Film
+     wird unterhalb von 860 px gar nicht erst geladen (data-src im HTML),
+     das leere Video-Element käme sonst als schwarze Fläche darüber.
+
+     Der Pfad ist relativ zu DIESER Datei, nicht zur HTML-Seite — deshalb
+     ein Schritt hinaus aus assets/css. */
+  .hero__video{ display:none; }
+  .hero__film{
+    background-image:url("../img/hero/hotel-abend.jpg"), var(--img-fallback);
+    background-size:cover;
+    /* Nicht mittig: bei 50 % schneidet der Rand das Dach-Leuchtschild mitten
+       im Wort an, und „HOTEL GABI" stünde dreimal im selben Bild — einmal
+       oben angeschnitten, einmal als Logo, einmal als Leuchtschrift unten.
+       Bei 30 % füllt die Glasfassade den Ausschnitt und das Logo ist die
+       einzige vollständige Marke. */
+    background-position:30% center;
+    background-repeat:no-repeat;
+  }
+
+  /* Das Nachtbild ist von sich aus dunkel — der volle Schleier des Films
+     würde es zumatschen. Unten bleibt er kräftig, damit der Übergang zum
+     nächsten Abschnitt sitzt. */
+  .hero__film::after{
+    background:linear-gradient(180deg,
+      rgba(28,10,14,.34) 0%,
+      rgba(28,10,14,.06) 38%,
+      rgba(28,10,14,.12) 62%,
+      rgba(28,10,14,.58) 100%);
+  }
 
   .rooms:not(.is-pinned){ height:auto; padding-block:var(--sect-y); }
   .rooms:not(.is-pinned) .rooms__viewport{
